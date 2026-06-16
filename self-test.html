@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>困局自测 · 懒哲人</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f0e8;font-family:'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Heiti SC','SimHei',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:16px}
+.container{max-width:420px;width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(44,40,34,0.08);padding:32px 24px;margin-bottom:40px}
+h1{font-size:22px;font-weight:700;color:#2c2822;letter-spacing:2px;text-align:center}
+.sub{font-size:13px;color:#8a7a60;text-align:center;margin:6px 0 24px;letter-spacing:1px}
+
+.steps{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.step-dot{width:10px;height:10px;border-radius:50%;background:#e8e0d0;transition:all 0.3s}
+.step-dot.active{background:#d4a843;width:28px;border-radius:5px}
+.step-dot.done{background:#6a9a6a}
+.step-label{text-align:center;font-size:11px;color:#b8a888;letter-spacing:1px;margin-bottom:4px}
+.progress-bar{height:4px;background:#e8e0d0;border-radius:2px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:#d4a843;transition:width 0.4s ease;width:0%}
+
+.page{display:none}.page.active{display:block;animation:fadeIn 0.35s}
+
+.q-title{font-size:17px;font-weight:600;color:#2c2822;letter-spacing:1px;margin-bottom:18px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{display:block;padding:14px 18px;border:2px solid #e8e0d0;border-radius:8px;cursor:pointer;font-size:15px;color:#5a4a3a;transition:all 0.2s;text-align:center}
+.option:hover{border-color:#d4a843;background:rgba(212,168,67,0.04)}
+.option.selected{border-color:#d4a843;background:rgba(212,168,67,0.1);color:#2c2822;font-weight:600}
+.nav{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
+.nav button{flex:1;padding:12px;border:none;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-prev{background:#e8e0d0;color:#8a7a60}
+.btn-next{background:#d4a843;color:#fff}
+.btn-next:disabled{background:#e8e0d0;color:#b8a888;cursor:not-allowed}
+
+/* 结果头 */
+.result-icon{font-size:48px;text-align:center;margin-bottom:8px}
+.result-title{font-size:16px;font-weight:600;text-align:center;color:#8a7a60;letter-spacing:1px}
+.result-gua{font-size:24px;font-weight:900;text-align:center;letter-spacing:4px;margin:6px 0}
+.result-desc{font-size:14px;color:#5a4a3a;line-height:1.8;text-align:center;margin:6px 0 12px;padding:14px;background:#faf5ea;border-radius:6px}
+.answer-label{font-size:11px;color:#b8a888;text-align:center;letter-spacing:1px;margin-bottom:4px}
+.answer-strip{font-size:24px;font-weight:700;text-align:center;letter-spacing:8px;margin:4px 0 12px}
+
+/* 售前区 */
+.presale{margin-top:24px;padding-top:20px;border-top:2px solid #e8e0d0}
+.presale h3{font-size:16px;font-weight:700;color:#2c2822;letter-spacing:1px;margin-bottom:6px}
+.presale .subhead{font-size:12px;color:#8a7a60;letter-spacing:0.5px;margin-bottom:14px;line-height:1.6}
+
+/* 产品卡片 */
+.product-card{padding:14px;border-radius:8px;border:1px solid #e8e0d0;margin-bottom:12px}
+.product-card.pc-free{border-left:4px solid #6a9a6a}
+.product-card.pc-basic{border-left:4px solid #b8b0a0}
+.product-card.pc-pro{border-left:4px solid #d4a843}
+.product-card.pc-consult{border-left:4px solid #8b1a1a;background:#faf5ea}
+.product-card .p-cat{font-size:10px;color:#8a7a60;letter-spacing:1px;margin-bottom:2px}
+.product-card .p-title{font-size:14px;font-weight:700;color:#2c2822}
+.product-card .p-price{font-size:22px;font-weight:900;color:#2c2822;margin:2px 0}
+.product-card .p-price small{font-size:12px;font-weight:400;color:#8a7a60}
+.product-card .p-desc{font-size:11px;color:#8a7a60;line-height:1.5;margin:4px 0}
+.product-card .p-action{display:inline-block;margin-top:6px;padding:6px 16px;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:1px}
+.p-action.green{background:#6a9a6a;color:#fff}
+.p-action.gold{background:#d4a843;color:#fff}
+.p-action.outline{border:1px solid #d4a843;color:#d4a843;background:transparent}
+
+/* 样卡展示 */
+.samples{margin-bottom:18px}
+.sample-card{background:#faf5ea;border-radius:6px;padding:12px;margin-bottom:8px}
+.sample-card .tag{font-size:9px;color:#8a7a60;letter-spacing:1px;margin-bottom:2px;text-align:left}
+.sample-card .quote{font-size:12px;line-height:1.6;color:#2c2822;letter-spacing:0.5px;padding:6px 8px;background:#fff;border-radius:4px}
+.sample-card .from{font-size:9px;color:#b8a888;text-align:right;margin-top:2px;letter-spacing:0.5px}
+
+.contact-bar{text-align:center;padding:14px;background:#2c2822;border-radius:8px;color:#fcf8f0;margin-top:8px}
+.contact-bar .c-title{font-size:15px;font-weight:700;letter-spacing:2px}
+.contact-bar .c-desc{font-size:11px;color:#b8a888;margin:4px 0;letter-spacing:0.5px;line-height:1.5}
+.contact-bar .c-btn{display:inline-block;margin-top:6px;padding:10px 32px;background:#d4a843;color:#2c2822;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px}
+
+.tag{text-align:center;margin-top:16px;font-size:10px;color:#b8a888;letter-spacing:1px;line-height:1.8}
+.free-note{text-align:center;margin-top:12px;padding:8px;font-size:10px;color:#b8a888;letter-spacing:0.5px;line-height:1.5;border-top:1px solid #e8e0d0}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>困局自测</h1>
+  <div class="sub">6道题，凭直觉选是或不是</div>
+
+  <div class="steps" id="steps">
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+  </div>
+  <div class="step-label" id="stepLabel">第 1 步：答题</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- 答题页 -->
+  <div class="page active" id="pageQuiz">
+    <div class="quiz-area" id="quizArea"></div>
+    <div class="nav">
+      <button class="btn-prev" id="prevBtn" onclick="prevQ()" style="display:none">← 上一题</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQ()" disabled>下一题 →</button>
+    </div>
+  </div>
+
+  <!-- 结果+售前页 -->
+  <div class="page" id="pageResult">
+    <div class="result-icon">🔮</div>
+    <div class="result-title">你的困局类型</div>
+    <div class="result-gua" id="resultGua"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="answer-label">你的回答</div>
+    <div class="answer-strip" id="answerStrip"></div>
+
+    <!-- 售前区 -->
+    <div class="presale" id="presaleArea" style="display:none">
+
+      <h3>针对你的困局，我能做什么</h3>
+      <div class="subhead" id="personalizedIntro"></div>
+
+      <!-- 免费产品 -->
+      <div class="product-card pc-free">
+        <div class="p-cat">🆓 免费 · 先诊断</div>
+        <div class="p-title">领取专业问卷</div>
+        <div class="p-desc">这份6题自测只是初步判断。我有一份更专业的16题问卷，能精准定位你的困局坐标。添加微信即可免费领取。</div>
+        <button class="p-action green" onclick="copyContact()">添加懒哲人 · 免费领 →</button>
+      </div>
+
+      <!-- 付费产品1: 能量卡 -->
+      <div class="product-card pc-basic">
+        <div class="p-cat">💎 付费 · 专属能量卡</div>
+        <div class="p-title">36条专属内容 + HTML网页</div>
+        <div class="p-price">199 <small>元/套</small></div>
+        <div class="p-desc">36条专属于你的内容，生成一个可以直接截图发朋友圈/小红书的网页。自带评论区引导语，可以编辑修改。</div>
+        <button class="p-action gold" onclick="copyContact()">加微信了解 →</button>
+      </div>
+
+      <!-- 付费产品2: 一对一方案 -->
+      <div class="product-card pc-consult">
+        <div class="p-cat">🔥 核心服务 · 一对一深度方案</div>
+        <div class="p-title">完整困局诊断 + 发展策略</div>
+        <div class="p-price">面议</div>
+        <div class="p-desc">像蔡生那样的全套服务——填专业问卷 → 我亲自用三分法深度分析你的困局 → 出一份完整的个人发展方案。不只给你卡，是给你一条路。</div>
+        <button class="p-action gold" onclick="copyContact()">预约一对一 →</button>
+      </div>
+
+      <!-- 样卡展示 -->
+      <h3 style="margin-top:16px">别人做出来的样子</h3>
+      <div class="samples">
+        <div class="sample-card">
+          <div class="tag">✨ 她能能量卡 · 给宝妈</div>
+          <div class="quote">「你按他们说的做，他们就不用操心了。你是最了解自己处境的人。」</div>
+          <div class="from">—— 一位开文胸工厂的宝妈</div>
+        </div>
+        <div class="sample-card">
+          <div class="tag">💪 江湖人能量卡 · 给兄弟</div>
+          <div class="quote">「以前觉得肩膀不够宽，扛不住生活的重量。后来才懂，肩膀是扛着扛着就宽了。」</div>
+          <div class="from">—— 一位在工地干了二十年的老哥</div>
+        </div>
+        <div class="sample-card">
+          <div class="tag">🧘 破困笺 · 懒哲人</div>
+          <div class="quote">「鞍都备好了，马就是不走。收绳。抬头。给马一个眼神。它懂的。」</div>
+          <div class="from">—— 懒哲人 · 三分法创始人</div>
+        </div>
+      </div>
+
+      <!-- 联系栏 -->
+      <div class="contact-bar">
+        <div class="c-title">加懒哲人微信</div>
+        <div class="c-desc" style="font-size:16px;font-weight:700;color:#d4a843;letter-spacing:2px;margin:6px 0">lanzheren</div>
+        <div class="c-desc">复制结果后，打开微信搜索这个ID即可添加<br>或截图这个页面，微信扫一扫</div>
+        <button class="c-btn" onclick="copyContact()">① 复制结果 → ② 去微信搜索 lanzheren</button>
+      </div>
+
+    </div>
+
+    <div class="free-note">截图这个结果，以后想做随时来 · 小红书「观察懒人」</div>
+    <div class="tag">懒哲人 · 三分法 · 困局诊断</div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { id:1, dim:"tian", text:"1. 你做的事，大方向是对的吗？" },
+  { id:2, dim:"tian", text:"2. 外面的变化，你感觉自己跟得上？" },
+  { id:3, dim:"di", text:"3. 你手头的资源，够你撑半年吗？" },
+  { id:4, dim:"di", text:"4. 你现在的条件，能让你放手一搏吗？" },
+  { id:5, dim:"ren", text:"5. 你心里清楚下一步该做什么？" },
+  { id:6, dim:"ren", text:"6. 你每天都在朝那个方向动？" }
+];
+
+const results = {
+  "+++":{ gua:"乾为天 · 亢龙有悔", intro:"你条件好、方向对、行动力也强。但你最需要的是——别飘。", desc:"你什么都有，就是有点飘。方向对、条件够、行动力也强——但你可能忘了自己也是凡人。"},
+  "++-":{ gua:"泽水困 · 空转困局", intro:"你有条件，但没动。你需要有人推你一把。", desc:"条件挺好，但你在原地打转。有方向有资源，就是不动——再好的牌不打也会烂。"},
+  "+-+":{ gua:"水雷屯 · 创始艰难", intro:"你有方向也肯干，但底子薄。你需要的是撑过去。", desc:"方向对，也肯干，但底子太薄。万事开头难，熬过去就是另一片天。"},
+  "+--":{ gua:"山水蒙 · 启蒙迷茫", intro:"你知道有利可图，但不知道怎么下手。你需要的是带路的人。", desc:"有利可图，但你不知道从哪下手。你缺的不是机会，缺的是带路的人。"},
+  "-++":{ gua:"水天需 · 待时之困", intro:"你有资源有能力，但大势没到。你需要的是沉住气。", desc:"你有资源有能力，但大势还没到。现在不是硬冲，是等风来。"},
+  "-+-":{ gua:"天地否 · 被困之局", intro:"环境不好，你也不差，但你不不动。你需要的是有人推一把。", desc:"环境很差，你也不差条件，但你就是不动。你在等什么？"},
+  "--+":{ gua:"坎为水 · 硬扛之局", intro:"啥都没有，但你在硬撑。你需要的是被看见。", desc:"啥都没有，但你在硬撑。环境不好、资源不够——但你还没倒。"},
+  "---":{ gua:"艮为山 · 卡住之局", intro:"上不去也下不来。你需要的是先看清楚再走。", desc:"上不去也下不来。卡在中间，动不了也停不下来。"}
+};
+
+const colors = { '+++':'#8b1a1a','++-':'#c87a2a','+-+':'#4a6fa5','+--':'#6a8a6a','-++':'#c49a4a','-+-':'#6a6a6a','--+':'#5a3a5a','---':'#3a3a5a' };
+
+let answers = {};
+let currentQ = 0;
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const dots = document.querySelectorAll('.step-dot');
+  if(id==='pageQuiz'){dots[0].className='step-dot active';dots[1].className='step-dot';document.getElementById('stepLabel').textContent='第 1 步：答题';}
+  else{dots[0].className='step-dot done';dots[1].className='step-dot active';document.getElementById('stepLabel').textContent='第 2 步：你的方案';}
+}
+
+function renderQ(index) {
+  if(index>=questions.length){goToResult();return;}
+  const q=questions[index], sel=answers[q.id]||'';
+  document.getElementById('quizArea').innerHTML=`
+    <div class="q-title">${q.text}</div>
+    <div class="options">
+      <div class="option ${sel==='是'?'selected':''}" onclick="select(${q.id},'是')">✅ 是</div>
+      <div class="option ${sel==='不是'?'selected':''}" onclick="select(${q.id},'不是')">❌ 不是</div>
+    </div>`;
+  document.getElementById('progressFill').style.width=((index)/questions.length*100)+'%';
+  document.getElementById('prevBtn').style.display=index===0?'none':'block';
+  updateNextBtn();
+}
+
+function select(qId,val){answers[qId]=val;document.querySelectorAll('.option').forEach(el=>{const t=el.textContent.trim().replace(/[✅❌]/g,'').trim();el.classList.toggle('selected',t===val);});updateNextBtn();}
+function updateNextBtn(){const b=document.getElementById('nextBtn');if(answers[questions[currentQ].id]){b.disabled=false;b.textContent=currentQ===questions.length-1?'查看方案 →':'下一题 →';}else b.disabled=true;}
+function nextQ(){if(!answers[questions[currentQ].id])return;currentQ++;renderQ(currentQ);}
+function prevQ(){if(currentQ>0){currentQ--;renderQ(currentQ);}}
+
+function goToResult(){
+  showPage('pageResult');
+  document.getElementById('progressFill').style.width='100%';
+  let tian=0,di=0,ren=0;
+  questions.forEach(q=>{const s=answers[q.id]==='是'?1:-1;if(q.dim==='tian')tian+=s;else if(q.dim==='di')di+=s;else ren+=s;});
+  const key=(tian>0?'+':'-')+(di>0?'+':'-')+(ren>0?'+':'-');
+  const res=results[key]||results['---'];
+  const c=colors[key]||'#8b1a1a';
+  document.getElementById('resultGua').textContent=res.gua;
+  document.getElementById('resultGua').style.color=c;
+  document.getElementById('resultDesc').textContent=res.desc;
+  const seq=questions.map(q=>answers[q.id]==='是'?'是':'否').join('');
+  document.getElementById('answerStrip').innerHTML=seq.split('').map(a=>a==='是'?'<span style="color:#6a9a6a">是</span>':'<span style="color:#c0392b">否</span>').join('');
+  document.getElementById('personalizedIntro').textContent=res.intro;
+  document.getElementById('presaleArea').style.display='block';
+  setTimeout(()=>{document.getElementById('presaleArea').scrollIntoView({behavior:'smooth',block:'start'});},400);
+}
+
+function copyContact(){
+  const gua = document.getElementById('resultGua').textContent;
+  const seq = Array.from(document.querySelectorAll('.answer-strip span')).map(s=>s.textContent).join('');
+  const txt = `【困局自测结果】
+回答：${seq}
+诊断：${gua}
+
+加微信：lanzheren（复制此ID去微信搜索）
+发送以上结果，免费领专业问卷`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    alert('✅ 已复制！\n打开微信 → 搜索 lanzheren → 发送结果即可');
+  }).catch(()=>{
+    alert('请手动复制以下ID去微信搜索：lanzheren');
+  });
+}
+
+// 启动
+renderQ(0);
+</script>
+</body>
+</html>
