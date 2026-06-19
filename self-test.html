@@ -1,682 +1,774 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>破困定位 · 5分钟找到你的真实困境</title>
-<style>
-  :root {
-    --bg: #f7f5f2;
-    --card: #ffffff;
-    --text: #1a1a2e;
-    --muted: #6b7280;
-    --accent: #c0392b;
-    --accent2: #7c3aed;
-    --border: #e5e7eb;
-    --shadow: 0 4px 24px rgba(0,0,0,0.06);
-    --radius: 16px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-  .container { max-width: 680px; margin: 0 auto; padding: 20px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>三观镜 · 处境分析工具</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  .trust-bar {
-    display: flex; justify-content: center; gap: 24px;
-    padding: 10px 0 6px;
-    font-size: 12px; color: var(--muted);
-    flex-wrap: wrap;
-  }
-  .trust-bar span { display: flex; align-items: center; gap: 4px; }
+    body {
+      background-color: #F8F6F1;
+      font-family: 'Inter', '思源黑体', 'Source Han Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #2D2A24;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px 16px;
+      transition: background-color 0.2s ease;
+      margin: 0;
+    }
 
-  /* Hero - CTA first */
-  .hero {
-    text-align: center;
-    padding: 32px 0 8px;
-  }
-  .hero .badge {
-    display: inline-block;
-    background: #fce8e6; color: var(--accent);
-    font-size: 12px; font-weight: 600;
-    padding: 4px 14px; border-radius: 20px;
-    margin-bottom: 14px;
-  }
-  .hero h1 {
-    font-size: 36px; font-weight: 700;
-    letter-spacing: -0.5px; line-height: 1.2;
-    margin-bottom: 10px;
-  }
-  .hero h1 span { color: var(--accent); }
-  .hero .value-prop {
-    font-size: 17px; font-weight: 500;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-  .hero .sub {
-    font-size: 15px; color: var(--muted);
-    max-width: 480px; margin: 0 auto 4px;
-  }
-  .hero .free-tag {
-    display: inline-block;
-    margin: 10px auto 0;
-    background: #fefce8; color: #92400e;
-    font-size: 13px; font-weight: 600;
-    padding: 6px 18px; border-radius: 20px;
-    border: 1px solid #fde68a;
-  }
+    .mirror-container {
+      width: 100%;
+      max-width: 640px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(2px);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+      border: 1px solid #E5E2DA;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transition: all 0.3s ease;
+    }
 
-  /* Hero CTA button */
-  .hero-cta {
-    margin-top: 20px;
-  }
-  .hero-cta .btn-big {
-    display: inline-block;
-    padding: 16px 48px;
-    background: var(--accent); color: white;
-    font-size: 18px; font-weight: 700;
-    border: none; border-radius: 14px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(192,57,43,0.3);
-  }
-  .hero-cta .btn-big:hover { background: #a93226; transform: translateY(-2px); }
-  .hero-cta .sub-text {
-    font-size: 13px; color: var(--muted);
-    margin-top: 8px;
-  }
+    .mirror-frame {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      border-radius: 20px;
+      pointer-events: none;
+      border: 1px solid rgba(196, 168, 130, 0.15);
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 0 1px rgba(229, 226, 218, 0.4);
+    }
 
-  /* Stories - moved below card */
-  .stories { max-width: 680px; margin: 20px auto 0; padding: 0 20px; }
-  .story-card {
-    margin-bottom: 10px;
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-  }
-  .story-summary {
-    cursor: pointer;
-    padding: 16px 20px;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .story-summary::-webkit-details-marker { display: none; }
-  .story-summary .arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
-  .story-card[open] .story-summary .arrow { transform: rotate(90deg); }
-  .story-body { padding: 0 20px 20px; line-height: 1.8; font-size: 14px; color: var(--text); }
-  .story-body .step-tag {
-    display: inline-block; font-size: 11px;
-    background: #f3e8ff; color: #7c3aed;
-    padding: 2px 10px; border-radius: 8px; margin-top: 8px;
-  }
+    .brand {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .brand h1 {
+      font-family: '思源宋体', 'Source Han Serif SC', 'Times New Roman', Georgia, serif;
+      font-weight: 400;
+      font-size: 2.4rem;
+      letter-spacing: 6px;
+      color: #2D2A24;
+      margin-bottom: 0;
+      line-height: 1.2;
+    }
+    .brand .subtitle {
+      color: #7A756E;
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
 
-  /* Card */
-  .card {
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 32px 28px;
-    margin-bottom: 20px;
-  }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #E5E2DA;
+      margin: 8px 0;
+    }
 
-  .progress-bar {
-    display: flex; gap: 6px;
-    margin-bottom: 28px;
-  }
-  .progress-dot { flex: 1; height: 4px; background: var(--border); border-radius: 4px; transition: background 0.3s; }
-  .progress-dot.active { background: var(--accent); }
-  .progress-dot.done { background: var(--accent2); }
+    .version-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 8px 0;
+    }
+    .version-option {
+      background: #FFFFFF;
+      border: 1px solid #E5E2DA;
+      border-radius: 16px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #FDFCF9;
+    }
+    .version-option.active {
+      border-color: #C4A882;
+      background: #F8F6F1;
+      box-shadow: 0 4px 12px rgba(139, 115, 85, 0.08);
+    }
+    .radio-custom {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #C4A882;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      transition: 0.2s;
+    }
+    .active .radio-custom {
+      background: #C4A882;
+      border-color: #C4A882;
+    }
+    .radio-custom::after {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    .active .radio-custom::after {
+      opacity: 1;
+    }
+    .version-text strong {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #2D2A24;
+      display: block;
+    }
+    .version-text span {
+      font-size: 0.85rem;
+      color: #7A756E;
+    }
 
-  .step-label { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 1px; margin-bottom: 8px; }
+    .btn-primary {
+      background: #2D2A24;
+      color: #FFFFFF;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      width: fit-content;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2D2A24;
+      border: 1px solid #2D2A24;
+    }
+    .btn-primary:hover {
+      background: #1e1b18;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #2D2A24;
+      border: 1px solid #C4A882;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(196,168,130,0.08);
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  .question { display: none; }
-  .question.active { display: block; }
-  .question h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  .question .hint { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+    .footer-note {
+      color: #7A756E;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
 
-  .options { display: flex; flex-direction: column; gap: 8px; }
-  .option {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 18px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .option:hover { border-color: var(--accent); background: #fef2f0; }
-  .option.selected { border-color: var(--accent); background: #fef2f0; }
-  .option .emoji { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
-  .option .text { flex: 1; }
-  .option .text .main { font-size: 15px; font-weight: 500; }
-  .option .text .desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
-  .option .text .scene { font-size: 13px; color: #92400e; margin-top: 3px; font-style: italic; }
+    .progress-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .progress-bar-bg {
+      height: 4px;
+      background: #E5E2DA;
+      border-radius: 4px;
+      flex: 1;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 4px;
+      background: #C4A882;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    .question-text {
+      font-size: 1.35rem;
+      font-weight: 400;
+      line-height: 1.4;
+      margin: 20px 0 16px;
+      color: #2D2A24;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .option-item {
+      background: white;
+      border: 1px solid #E5E2DA;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #2D2A24;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-item.selected {
+      border-color: #8B7355;
+      background: #F8F6F1;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+    .input-box {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #E5E2DA;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+      color: #2D2A24;
+      outline: none;
+    }
+    .input-box:focus {
+      border-color: #C4A882;
+    }
 
-  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-  .btn {
-    padding: 12px 28px; border: none; border-radius: 10px;
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s; flex: 1;
-  }
-  .btn-primary { background: var(--accent); color: white; font-size: 16px; padding: 14px 28px; }
-  .btn-primary:hover { background: #a93226; }
-  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
-  .btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: var(--border); }
+    .result-type {
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: 8px;
+      text-align: center;
+      color: #2D2A24;
+      margin: 16px 0 8px;
+      font-family: '思源宋体', serif;
+    }
+    .dimension-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+    .dim-label {
+      width: 70px;
+      font-weight: 500;
+    }
+    .dim-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #E5E2DA;
+      border-radius: 8px;
+      margin: 0 12px;
+    }
+    .dim-bar-fill {
+      height: 8px;
+      border-radius: 8px;
+      background: #C4A882;
+      width: 0%;
+    }
+    .mirror-note {
+      background: #F8F6F1;
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 3px solid #C4A882;
+      font-style: italic;
+      color: #5f5a54;
+    }
+    .fiction-excerpt {
+      font-family: '思源宋体', serif;
+      color: #4a4640;
+      border-top: 1px solid #E5E2DA;
+      padding-top: 16px;
+      font-size: 0.95rem;
+    }
 
-  /* Result */
-  .result-section { display: none; }
-  .result-section.active { display: block; }
+    .hidden {
+      display: none !important;
+    }
 
-  .result-header { text-align: center; margin-bottom: 24px; }
-  .result-header .badge {
-    display: inline-block; background: #f3e8ff; color: #7c3aed;
-    font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 20px; margin-bottom: 12px;
-  }
-  .result-header h2 { font-size: 24px; }
-  .result-header .sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
-
-  .result-box {
-    background: #faf5ff; border: 2px solid #e9d5ff;
-    border-radius: 12px; padding: 20px; margin-bottom: 16px;
-  }
-  .result-box .label { font-size: 11px; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .result-box .content { font-size: 15px; line-height: 1.7; color: var(--text); }
-  .result-box.action { background: #fef2f0; border-color: #fecaca; }
-  .result-box.action .label { color: #c0392b; }
-
-  .peer-proof {
-    margin: 16px 0; padding: 14px 18px;
-    background: #f0fdf4; border: 1px solid #bbf7d0;
-    border-radius: 12px; font-size: 13px; color: #166534;
-  }
-
-  /* Follow section */
-  .follow-section {
-    background: linear-gradient(135deg, #fefce8, #fef9c3);
-    border: 2px solid #fde68a;
-    border-radius: 12px; padding: 24px 20px;
-    margin-top: 20px;
-  }
-  .follow-section .gift-badge {
-    display: inline-block; background: #92400e; color: white;
-    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px;
-    margin-bottom: 12px; letter-spacing: 1px;
-  }
-  .follow-section h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; color: #1a1a2e; }
-  .follow-section .sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-  .follow-section .value-list {
-    background: white; border-radius: 10px;
-    padding: 14px 18px; margin-bottom: 16px;
-    font-size: 14px; line-height: 1.8;
-  }
-  .follow-section .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
-  .follow-section input {
-    flex: 1; padding: 12px 14px;
-    border: 2px solid var(--border);
-    border-radius: 10px; font-size: 15px;
-    outline: none; transition: border 0.2s;
-  }
-  .follow-section input:focus { border-color: var(--accent); }
-  .follow-section .btn-follow {
-    padding: 12px 20px; white-space: nowrap;
-    background: #92400e; color: white;
-    border: none; border-radius: 10px;
-    font-size: 15px; font-weight: 700; cursor: pointer;
-    transition: background 0.2s;
-  }
-  .follow-section .btn-follow:hover { background: #78350f; }
-  .follow-section .btn-follow:disabled { background: #ccc; cursor: not-allowed; }
-  .follow-section .safe-note { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
-  .follow-section .wechat-link {
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 16px;
-    background: #f3f4f6; border-radius: 10px;
-    font-size: 14px; color: var(--text);
-    margin-top: 10px;
-  }
-
-  .submit-note { display: none; }
-  .submit-note.active { display: block; }
-
-  .reset-link { display: block; text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); text-decoration: underline; cursor: pointer; }
-  .reset-link:hover { color: var(--accent); }
-
-  .footer { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
-
-  @media (max-width: 480px) {
-    .hero h1 { font-size: 28px; }
-    .hero .value-prop { font-size: 16px; }
-    .card { padding: 20px 16px; }
-    .follow-section .input-group { flex-direction: column; }
-    .trust-bar { gap: 12px; font-size: 11px; }
-    .hero-cta .btn-big { padding: 14px 36px; font-size: 16px; }
-  }
-</style>
+    @media (max-width: 640px) {
+      .mirror-container {
+        padding: 24px 16px;
+      }
+    }
+  </style>
 </head>
 <body>
+<div class="mirror-container" id="appContainer">
+  <div class="mirror-frame"></div>
 
-<div class="container">
+  <!-- 首页视图 -->
+  <div id="landingView">
+    <div class="brand">
+      <h1>三 观 镜</h1>
+      <div class="subtitle">这不是占卜。这是镜子。</div>
+    </div>
+    <div class="divider"></div>
 
-<div class="trust-bar">
-  <span>🔒 信息加密 · 绝不外泄</span>
-  <span>⏱ 仅需5分钟</span>
-  <span>🎁 免费 · 无需注册</span>
-  <span>📖 基于懒哲人破困体系</span>
-</div>
+    <div class="version-selector">
+      <div id="versionSimple" class="version-option active" onclick="selectVersion('simple')">
+        <div class="radio-custom"></div>
+        <div class="version-text">
+          <strong>精简版 · 5分钟</strong>
+          <span>7道选择题，快速定位</span>
+        </div>
+      </div>
+      <div id="versionDeep" class="version-option" onclick="selectVersion('deep')">
+        <div class="radio-custom"></div>
+        <div class="version-text">
+          <strong>深度版 · 15分钟</strong>
+          <span>7题+4开放题，深入反思</span>
+        </div>
+      </div>
+    </div>
 
-<div class="hero">
-  <div class="badge">已有人在这里找到方向</div>
-  <h1>5分钟测出你卡在 <span>哪个困局</span></h1>
-  <div class="value-prop">不是鸡汤——是一句让你心里发紧的诊断</div>
-  <p class="sub">和一个今天就能做的动作。</p>
-  <div class="free-tag">🎁 免费 · 完整报告含6条行路篇动作</div>
-  <div class="hero-cta">
-    <button class="btn-big" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'});setTimeout(()=>initQuiz(),300);">开始诊断 →</button>
-    <div class="sub-text">3步选择题 · 不用注册 · 结果马上出</div>
+    <button class="btn-primary" id="startBtn" onclick="startTest()">
+      <span>开始照镜子 →</span>
+    </button>
+    <div class="footer-note">
+      困局不是你的错。<br>但继续困下去，是你的事。
+    </div>
+    <div class="footer-note" style="margin-top:12px; opacity:0.7;">
+      源自小说《困局》· 懒哲人破困体系
+    </div>
   </div>
-</div>
 
-<!-- Assessment Card - moved to top -->
-<div class="card" id="app">
-  <div class="progress-bar" id="progressBar"></div>
-
-  <div id="questionContainer"></div>
-
-  <div class="result-section" id="resultSection">
-    <div class="progress-bar" id="resultProgressBar" style="display:none;">
-      <div class="progress-dot done"></div>
-      <div class="progress-dot done"></div>
-      <div class="progress-dot done"></div>
+  <!-- 测试视图 -->
+  <div id="testView" class="hidden">
+    <div style="display: flex; justify-content: space-between; color: #7A756E;">
+      <span>三观镜</span>
+      <span id="questionCounter">第 1 / 7 题</span>
     </div>
-
-    <div class="result-header">
-      <div class="badge">🎯 定位完成 · 你的专属结果</div>
-      <h2 id="resultTitle"></h2>
-      <p class="sub" id="resultSubtitle"></p>
+    <div class="progress-section">
+      <div class="progress-bar-bg"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
     </div>
-
-    <div class="result-box">
-      <div class="label">📖 诊断结果</div>
-      <div class="content" id="resultDiagnosis"></div>
+    <div id="questionText" class="question-text"></div>
+    <div id="optionsContainer" class="options-list"></div>
+    <div id="openInputContainer" class="hidden" style="margin-top:12px;">
+      <input type="text" id="openInputField" class="input-box" placeholder="输入你的回答..." maxlength="20">
     </div>
-
-    <div class="result-box action">
-      <div class="label">👉 今日动作</div>
-      <div class="content" id="resultAction"></div>
-      <div style="margin-top:12px;font-size:13px;color:var(--muted);padding-top:12px;border-top:1px dashed #fecaca;">
-        💡 明天回来测下一个动作 → 6条爻辞对应6个动作，一天做一个<br>
-        懒哲人破困体系 · 每个诊断对应真实人生场景
-      </div>
+    <div class="nav-buttons">
+      <button class="btn-secondary" id="prevBtn" onclick="prevQuestion()">← 上一步</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">下一步 →</button>
     </div>
-
-    <div class="peer-proof">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span style="font-size:16px;">👥</span>
-        <span style="font-weight:600;">和你同样困局的人也在行动</span>
-      </div>
-      <div style="line-height:1.7;">
-        有人看到"今晚提前15分钟放下手机"后，真的设了闹钟<br>
-        有人写下了"最低需要多少钱活一个月"，第一次面对那个数字<br>
-        有人对家里说了第一次"不"，发现天没塌
-      </div>
-    </div>
-
-    <div class="follow-section" id="followSection">
-      <div class="gift-badge">🎁 免费领取</div>
-      <h3>你的专属6步破困方案已生成</h3>
-      <p class="sub">留下联系方式，免费获取完整版</p>
-
-      <div class="value-list">
-        <div class="item">✅ 你当前困卦的 <strong>全部6条行路篇动作</strong></div>
-        <div class="item">✅ 后续根据你的反馈 <strong>做个性化调整</strong></div>
-      </div>
-
-      <div class="input-group">
-        <input type="text" id="wechatInput" placeholder="你的微信号" oninput="checkFollowInput()">
-        <input type="email" id="emailInput" placeholder="你的邮箱（选填）" oninput="checkFollowInput()" style="flex:0.8;">
-        <button class="btn-follow" id="btnFollow" disabled onclick="submitFollow()">免费获取我的6步方案 →</button>
-      </div>
-
-      <div class="safe-note">
-        ✅ 不会拉群推销 · 随时可取消 · 7天内不发送任何无关内容
-      </div>
-
-      <div class="wechat-link">
-        <span style="font-size:20px;">📱</span>
-        <span>微信视频号关注 <strong>「懒哲人」</strong>，每天一条困卦拆解</span>
-      </div>
-    </div>
-
-    <div class="submit-note" id="submitNote"></div>
-
-    <a class="reset-link" onclick="resetQuiz()">重新测一次</a>
   </div>
-</div>
 
-<!-- Stories - moved below the card -->
-<div class="stories">
-  <div style="font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;">── 他们的故事 ──</div>
-
-  <details class="story-card">
-    <summary class="story-summary">
-      <span style="font-size:24px;">👩</span>
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:15px;">"我每天哄完孩子，一个人在客厅坐到凌晨"</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开她的故事</div>
-      </div>
-      <span class="arrow">▶</span>
-    </summary>
-    <div class="story-body">
-      <p>小陈，32岁，孩子两岁半。白天上班，晚上带娃，周末还要应付双方父母。</p>
-      <p>她说她最怕的不是累——是累到睡不着。每天哄完孩子已经十一点，明明困得不行，但躺在沙发上刷手机，一刷就到凌晨两点。"不是不想睡，是不敢睡。闭上眼睛，明天就要来了。"</p>
-      <p>她填了破困定位，系统给她匹配到<strong>「过载崩塌 · 初爻」</strong>。</p>
-      <p>诊断画面让她愣住了：<em>"你连续几周每天睡眠不到五小时。早上的第一反应不是新的一天开始了——而是今天又要应付完。"</em></p>
-      <p>她说看到这句话的时候，眼泪就下来了。"第一次有人把我心里那点事写出来了。"</p>
-      <p>今日动作只有一句话：<strong>"今晚提前15分钟放下手机，放在另一个房间充电。"</strong></p>
-      <p>"我当时想，15分钟有什么用？但那天晚上我真的试了。手机放客厅，躺在床上的时候，我发现自己其实已经很久没有在安静里待过了。"</p>
-      <p><strong>那一晚她睡了6个小时。不是很多，但这是她三个月来睡得最长的一次。</strong></p>
-      <div class="step-tag">已获取完整6步方案 · 目前在第4步</div>
+  <!-- 结果视图 -->
+  <div id="resultView" class="hidden">
+    <div class="brand">
+      <h1 style="font-size:1.8rem;">三观镜 · 处境分析</h1>
+      <div class="subtitle">“这不是占卜。这是镜子。”</div>
     </div>
-  </details>
-
-  <details class="story-card">
-    <summary class="story-summary">
-      <span style="font-size:24px;">👨‍💼</span>
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:15px;">"工资到账的那一刻，我还完信用卡，余额是0"</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开他的故事</div>
-      </div>
-      <span class="arrow">▶</span>
-    </summary>
-    <div class="story-body">
-      <p>阿强，28岁，在广州做仓库管理。每月工资4800，房租1200，伙食1000，花呗800，剩下的不够买一张回家的高铁票。</p>
-      <p>他说他最怕的不是穷——是算账。"每次打开手机银行，看到余额那个数字，我就锁屏放回去了。假装没看过。"</p>
-      <p>填了破困定位，系统匹配到<strong>「资源枯竭 · 四爻」</strong>。</p>
-      <p>诊断画面：<em>"你打开手机银行看了一眼余额，然后把手机锁屏，放回兜里——你假装自己没看过。但你站起来接水的时候，顺手把外卖软件里所有三十块以上的套餐都划掉了。"</em></p>
-      <p>阿强看完沉默了一会儿。"这不就是我吗。"</p>
-      <p>今日动作：<strong>"算一笔账：你最大的一笔非必要支出是什么？看见了就算做完。"</strong></p>
-      <p>他算了。最大的一笔非必要支出是——每周三次的外卖咖啡，一个月花掉360块。</p>
-      <p>"我以前没算过，觉得一杯咖啡十几块钱能贵到哪去。但360块是我一个月的话费加水电了。"</p>
-      <p><strong>他没有戒咖啡，但他开始自己冲了。一个月省了200块。</strong></p>
-      <div class="step-tag">已获取完整6步方案 · 目前在第2步</div>
+    <div class="result-type" id="resultTypeName">破土期</div>
+    <div id="dimensionsDisplay" style="margin:16px 0;"></div>
+    <div id="interpretationText" style="color:#2D2A24; margin:16px 0;"></div>
+    <div class="mirror-note" id="mirrorNote"></div>
+    <div class="fiction-excerpt" id="fictionExcerpt"></div>
+    <div class="btn-group" style="margin-top:20px;">
+      <button class="btn-secondary" onclick="saveResult()">保存结果</button>
+      <button class="btn-secondary" onclick="shareResult()">分享</button>
+      <button class="btn-primary" onclick="restartTest()">重测</button>
     </div>
-  </details>
-
-  <details class="story-card">
-    <summary class="story-summary">
-      <span style="font-size:24px;">👔</span>
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:15px;">"年入百万，但每天晚上在车里坐半小时才上楼"</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开他的故事</div>
-      </div>
-      <span class="arrow">▶</span>
-    </summary>
-    <div class="story-body">
-      <p>杨哥，38岁，互联网公司总监。年入百万，有房有车有家庭。在外人看来，他什么都有了。</p>
-      <p>但他每天下班到车库之后，要在车里坐半个小时才上楼。不是什么都没做——就是坐在那里，刷手机，发呆。等那个"上楼回到生活里"的动力攒够了，才开门。</p>
-      <p>系统匹配到<strong>「丰盛虚无 · 初爻」</strong>。</p>
-      <p>诊断画面：<em>"别人说'你已经很成功了'。你点了点头——不是因为同意，是懒得解释。"</em></p>
-      <p>他看到这句话的时候，把手机放下了。过了一会儿才拿起来继续看。</p>
-      <p>今日动作：<strong>"今晚允许自己不做任何需要有意义的事——躺平一小时，不带愧疚。"</strong></p>
-      <p>他试了。那天晚上他没有加班，没有看行业资讯，没有规划周末行程。他躺在沙发上，看了一部不需要动脑子的电影。</p>
-      <p><strong>"那一小时里，我什么都没有想——但我觉得我在活着。"</strong></p>
-      <div class="step-tag">已获取完整6步方案 · 目前在第3步</div>
-    </div>
-  </details>
-</div>
-
-<div class="footer">
-  懒哲人破困体系 · 让更多的小人物破困
-</div>
-
+    <div class="footer-note">源自小说《困局》· 懒哲人破困体系</div>
+  </div>
 </div>
 
 <script>
-const MODULES = [
-  { id: 'economy', emoji: '💰', name: '缺钱', desc: '信用卡快还不上了', scene: '"我上个月信用卡还没还完"' },
-  { id: 'health', emoji: '😴', name: '缺力', desc: '身体在报警了', scene: '"我已经三个月没睡过一个整觉了"' },
-  { id: 'relation', emoji: '🤝', name: '缺人', desc: '身边人在消耗你', scene: '"我感觉自己在一个人撑着所有事"' },
-  { id: 'order', emoji: '😶', name: '没意思', desc: '什么都有了但什么都不想要了', scene: '"我不知道自己还该想要什么"' },
-  { id: 'action', emoji: '⚡', name: '缺行动力', desc: '知道该做但动不了', scene: '"我每天都在拖，拖到最后一刻"' }
-];
+(function() {
+  // --- 状态管理 ---
+  const state = {
+    version: 'simple',
+    currentStep: 0,
+    answers: [],
+    totalQuestions: 7,
+  };
 
-const GUA = {
-  economy: [
-    { id: 'T1', name: '资源枯竭', desc: '钱在缩，每天都在算还能撑多久。选项越来越窄。' },
-    { id: 'D18', name: '持续失血', desc: '钱不知道漏哪去了。没乱花，但月底一算又超了。' },
-    { id: 'H13', name: '不敢开价', desc: '一直说"好"，从不谈价格。你的付出值更多，但不敢开口。' },
-    { id: 'T3', name: '开局卡死', desc: '刚辞职/刚毕业/想转行，第一步迈不出去。' }
-  ],
-  health: [
-    { id: 'D5', name: '过载崩塌', desc: '已经超负荷太久了。身体在用症状跟你说话。' },
-    { id: 'H8', name: '停滞钝化', desc: '太久没动了。不是不想动，是启动开关找不到了。' },
-    { id: 'H14', name: '愉悦上瘾', desc: '不用刷手机/吃/买就撑不下去。停不下来。' }
-  ],
-  relation: [
-    { id: 'D14', name: '亲情绑架', desc: '被家人用"应该"和"必须"捆住了。' },
-    { id: 'D16', name: '婚姻消耗', desc: '在一段关系里撑了很久。进退都痛。' },
-    { id: 'H12', name: '漂泊无根', desc: '在哪都像外人。没有地方叫"回去"。' }
-  ],
-  order: [
-    { id: 'H1', name: '身份迷失', desc: '旧的标签掉了，新的还没长出来。' },
-    { id: 'H11', name: '丰盛虚无', desc: '什么都有了，但什么都不重要。' }
-  ],
-  action: [
-    { id: 'D9', name: '惯性困守', desc: '知道不对但改不了。在同一条路上绕了太久。' },
-    { id: 'D20', name: '决断瘫痪', desc: '一直在等"对的时机"。但你知道它不会来。' }
-  ]
-};
+  // 精简版7道题定义
+  const questionsSimple = [
+    { id:1, text:"你觉得自己最近三年，整体是在往上走、原地踏步、还是往下滑？", options:["往上走","原地踏步","往下滑","在换方向"] },
+    { id:2, text:"你现在做的事情，有多少是你真正想做的？", options:["全部或大部分","一半左右","很少","几乎没有","我不知道我想做什么"] },
+    { id:3, text:"如果你明天失去现在的工作（或主要收入来源），你还有什么？", options:["充足存款（可支撑1年+）","够撑一阵子（3-6个月）","人脉或技能可立刻变现","副业或备选方案","不知道","什么都没有"] },
+    { id:4, text:"你上一次真正觉得自己“在做一件事”——不是为了交差，而是因为你想做——是什么时候？", options:["就在最近","几个月前","一年前左右","很久以前，记不清了","从未有过"] },
+    { id:5, text:"你身边最亲近的三个人，他们目前的状态跟你比怎么样？", options:["比你好不少","差不多","也困着","不想比较/不清楚"] },
+    { id:6, text:"如果有一个机会让你从现在的生活里完全抽身，你最舍不得的是什么？", options:["家人","朋友或社会关系","物质条件（房/收入等）","身份感（职位/社会地位）","没什么舍不得的","我自己——怕离开找不到方向"] },
+    { id:7, text:"用一个词或一句话形容你现在的状态。（限20字）", options:[] }
+  ];
 
-const LINES = {
-  'T1': { lines: ['你把外卖从三十块换成了十五块的，月底一看，还是超了。删掉了打车软件，开始走十五分钟去坐地铁。','打开手机银行看了一眼余额，锁屏放回兜里。站起来接水的时候，顺手把外卖里所有三十块以上的划掉了。','删掉了所有打车、外卖和视频会员的App。装了一个记账软件，输入了第一笔支出："泡面，3.5元。"','把旧电脑给了回收的人，没要钱。不是大方，是不想再搬了。回到屋里，新主机亮了。','开始教别人做你做的事了。教的时间是你替他们做的一半，那一半时间可以换成你的收入。','把之前半途而废的东西翻出来看了看，其实没那么差。坐下改了一版，发给了第一个人。'], actions: ['写下一个数字：你最低需要多少钱活一个月。今天只写这个。','算一笔账：你最大的一笔非必要支出是什么？看见了就算做完。','取消一个自动续费。就一个。看看月底少了几块钱。','把一件闲置超过3个月的物品处理掉——卖掉、送掉、扔掉。','为你做的一件事定一个价格。不是市场价，是你愿意接受的最低价格。','为一个人做了一件你擅长的事，然后收钱。就从这一次开始。'] },
-  'D18': { lines: ['查账单发现一笔自动续费忘了三个月。取消的时候看了总额——够吃十顿饭了。','把最近的支出拉了一张表，发现最大一笔不是房租，是零碎消费。手好像不是自己的。','开始记账了。发现有一笔不知道花哪了的钱，这个月累积到了六百。给它起了一行名字："黑洞"。','"黑洞"那个数字开始变小了。不是因为收入变多了，是因为开始看见它了。','能在月底说清楚钱去哪了。不需要跟任何人汇报，但自己知道了。','漏掉的东西变少了。从"漏"变成了"记下了"，离"记住了"还差一点——但在走了。'], actions: ['查一下有哪几个自动续费你还开着。列出来，看完就行。','从列表里关掉一个。选那个你三个月没碰过的。','开一个记账条目叫"不知道花哪了"，今天花了什么不确定的，记进去。','把昨晚的支出回忆一遍写下来——能想起多少算多少。','今天花任何超过50块之前，先暂停10秒。停完再决定。','你花的每一笔钱都想得起是花在哪了。不用记了，你知道了。'] },
-  'H13': { lines: ['同事让帮忙做PPT，加班到十一点。对方说了谢谢——那就是全部报酬了。','朋友找你借钱，借了。写借条的时候手在抖——知道他不会主动还。','帮了一个人，对方请你吃饭。你的服务值这顿饭的十倍。没说话，把饭吃了。','教别人做你的事，对方说"以后有活找你"。把自己的活儿教给了抢活儿的人。','开始说"不行"了。说出口之后发现对方没有追问。原来可以拒绝。','"不"已经是一个自然的词了。说完不会再去想对方怎么想。'], actions: ['写下最近一次你答应但不想做的事。只写，不分析。','今天对一个人说一个很小的"不"——"这个时间我不行"。','说了"不"之后，不追加解释。让"不"自己站着。','连续两天，每天说一次"不"——对两件不同的事。','当对方追问时，只说"就是不行的"。不再给更多理由。','"不"和"好"一样自然。不再需要练习了。'] },
-  'T3': { lines: ['刚辞职，还没想好下一步。打开招聘软件划了几下关掉了。告诉自己休息几天。','投了四份简历，没回复。又搜了一遍，结果跟上次一样。不知道该继续投还是停下来。','在招聘软件上划了半小时。看到一个岗位点进去——记不清第几次了。想投，看了要求又关了。','把三个招聘App都刷了一遍。投了七份，没回复。又拿起手机把刚投的看了一遍。','接到面试电话。挂了才发现手心出汗了——太久没听到"简历通过"了。对着镜子练了一下午。','收到offer时正在吃外卖。以为是垃圾邮件差点删了。看完把手机扣桌上。那口饭忽然有味道了。'], actions: ['写下你现在能做的三件事——不用"擅长"，是"能做"。写完放着。','从三件事里选一件你最不讨厌的，搜一下"做这个需要什么"。只搜，不投。','找到那个岗位的要求，对着写下你已有的匹配项。有就是有，没有就是没有。','投一份简历。今天只投这一份。投完关掉手机。','为面试准备一个问题。只准备一个——你最想知道的。问出来。','你已经迈出第一步了。不是因为准备好了——是发现不准备好也能走。'] },
-  'D5': { lines: ['连续几周每天睡不到五小时。早上的第一反应不是"新的一天"，是"又要应付完"。','请假去了医院，但一直在看手机。叫号的时候回了七条消息。医生说话像隔了一层玻璃。','开始不回复了。看着消息读完，把手机翻过去。等了十五分钟，它没再亮。','删掉了几个App，关掉了推送。手机放在桌上屏幕朝上——没有新的通知。','在医院坐了一天。没开工作群，没回消息。回去的路上一直看着窗外。','下班没看手机。今晚设的闹钟不是提醒你开会——是提醒你关灯睡觉。'], actions: ['今晚提前15分钟放下手机。不要求睡，只要求提前进入黑暗。','今晚把手机放客厅。不要求早睡，只要求多走两步才能拿到。','提前20分钟放下所有屏幕。不是早点睡，是早点停止输入。','连续3天执行"睡前1小时无屏幕"。三天后看数据。','连续7天睡眠7小时以上。白天没那么困了，可以不用查了。','不再计算睡眠时间了。身体学会了在需要的时候困。'] },
-  'H8': { lines: ['今天没离开过这张椅子。等天色暗了才发现过去了一整个白天。站起来腿麻了。','消息不回，灰尘不擦。风从窗缝灌进来，感觉到了，但没去关窗。','打开通讯录翻了一下又关上了。没什么好说的——但也知道，是不知道怎么开始说。','被一件事推了一下，不得不做。做完发现自己还能动。原来怕的不是做不好，是开始。','自己做了一件很小的事。做完了，没那么难。不需要庆祝，直接做了下一件。','今天能做的事比昨天多了一点。呼吸的时候肩膀是垂下去的。'], actions: ['站起来，走3步，坐下。不是运动，是打断"坐着"一次。','设一个计时器，每45分钟站起来一次。不要求走，只要求中断。','站起来后做三个伸展——向上、转身、弯腰。不要求标准，做了就行。','连续两天，每天完成一次"站起来+走30步"。','连续5天，每天至少有一次"走动超过2分钟"的记录。','不再计算今天有没有站起来了。身体会提醒你。'] },
-  'H14': { lines: ['刷了一整晚视频。关掉时凌晨两点。告诉自己明天不这样了——但知道明天还会。','又在用食物让自己舒服。吃完发现根本不饿。吃东西的时候在想别的事。','又在买东西了。拆快递时不记得买了什么。看着那些东西，发现只是想买点什么。','做了一件事，没发到任何平台。发现做完和被人看到之间的距离，比想象中宽。','手机放客厅，躺下了。没睡着，但不需要用任何东西来填充这十几分钟了。','不再需要那些短暂的逃避了。能安静坐一会儿——不刷手机，不吃东西，只是坐着。'], actions: ['下次拿起手机准备刷的时候，先停3秒。不放下，不开始，只是停。','在下次想吃/刷/买之前，问自己一句"我现在在想什么"——不需要回答。','选一个你平时会用麻痹来回避的时刻，换一个动作——起身倒杯水，走出房间一分钟。','做一件可以发社交平台的事，但没发出去。做完之后安静待着。','手机放客厅，躺下了。不需要任何东西来填充这十几分钟。','可以在空白时刻里待着了。'] },
-  'D14': { lines: ['电话里说了"好"。挂断后发现又答应了一件事。楼下有人散步，步子很慢。','饭桌上又听到那句"你是唯一的希望"。低头夹菜没接话。把碗放进水槽，水声盖过了那句话。','拒绝了。"这次我真的帮不了"。电话那头安静了。挂了之后没有内疚。','开始设底线了。告诉对方哪些能做、哪些不能。说完发现没有解释为什么。','对方开始尊重界限了。听到他们说"这件事我自己来就行"。停了一下，说"好"。','站在自己的边界内。帮他们做了一件事，做完没有在算"该不该做"。'], actions: ['今天不接一个电话。只选一个人，只回避这一次。','当对方提出要求时，只说"我再想想"。不答应，不拒绝。','说一次"这个我做不了"。不解释原因。','设一条底线——告诉对方"这件事我不能做"。说完停住。','当对方试图越线时，再说一次"不行"。声音没有发抖。','不再需要练习了。对方已经学会了尊重你的边界。'] },
-  'D16': { lines: ['又在想"要不要离婚"了。每次吵架都想到这个词，但第二天又假装没事。已经反复了两年。','一个人的时候反而轻松。想到回家胸口就沉。不是不爱了，是爱被磨成了习惯性的疲惫。','试着沟通过。每次说不到三句就吵，或者变成沉默。已经不想再说了。','问自己"如果离开会失去什么"——列了一张单子，比想象中长。不是放不下他，是放不下那张单子。','做了一个决定——不是离不离婚的决定，是不再让这个问题每天折磨自己的决定。','发现已经不太在意那个答案了。不是不在乎——是终于相信无论选哪条路，都能走。'], actions: ['写下"如果不用考虑任何人，我想______"。填一个词，不判断，只写。','今天做一件和他无关的事。一个人去一个你们从没一起去过的地方。','找一个你信任的人，说出那句你从没对人说过的话。说出来就是完成。','写下你在这段关系里最不能失去的三样东西。看清楚底线在哪。','连续三天，每天为自己做一件事。"暂时不管他"——允许的。','无论选哪条路，你都能走。不需要答案了，已经有答案了。'] },
-  'H12': { lines: ['搬了三次家，每次一个人。所有东西两个箱子装完。不知道是活着还是寄存着。','经过一家店，老板和熟客在聊天。走了过去没人叫住你。继续走了，没回头。','填表时"籍贯"那栏停了。不知道该写哪——那个地方不回去了，这里也不是。','在这个城市有了固定去处。常去的便利店，固定的理发师。开始被认出来了。','保安说了声"下班啦"。点了点头，发现自己笑了——以为没在笑。','不再问"我属于哪里"了。归属不是被给予的——你在的地方，就是你的地方。'], actions: ['今天停在一个地方，对自己说一句："我在这里。"不需要相信，只需要说。','把房间里三样东西，移到你觉得"它们该在"的位置。','在这个城市找一个可以免费停留的地方——坐10分钟。','在常去的店点同一个东西。让它开始"认出你"。','连续一周，每天同一时间回到同一个地方待15分钟。','不再问"我属于哪里"了。你在的地方，就是你的地方。'] },
-  'H1': { lines: ['填表时"职业"那栏停了很久。写了一个词划掉，又写了一个。最后写了一个很久没用过的头衔。','删掉了社交账号简介。光标一直闪。打了几个字又删了——不知道用什么词介绍自己。','有人说"你就是那个做XX的人"。想说"我已经不是了"，但只是点了点头。','开始做一件新的事。写下来的时候发现"职业"那栏可以不填了。','介绍自己时没说职位。"我最近在做XX"。说这句话时，没在等人接话。','不需要再定义自己了。站在自己做过的事情里。填表时写了一个词，直接翻到下一页。'], actions: ['写下一个你曾经是但现在不是的身份。就写一个。','写下"我曾经是______"，填一个词。下面写"我现在是______"——第二个空着。','问一个人"你觉得我是怎样的人"。不解释为什么问。','写下三件你喜欢做的事——不是"擅长"，是"喜欢"。','用"我喜欢______，而不是______"写一句话。','已经在做喜欢的事了。做的时候不会问"这算不算我"。'] },
-  'H11': { lines: ['拿到了追了三年的结果。看着通知心里没有波澜。放桌上，继续吃完那碗面。','别人说"你已经很成功了"。点了点头——不是因为同意，是懒得解释。','刷到别人晒收入晒房晒车。你都有，但你不羡慕——是不知道自己还该想要什么了。','试着找了一件新的事做。做了一半知道尽头什么样了。没继续。','停下来，没刷手机，没想下一步。已经很久没这样停过了。','发现"重要"不再需要别人定义了。知道哪些事对自己重要，哪怕全世界只有你在乎。'], actions: ['今晚允许自己不做任何需要"有意义"的事——躺平一小时，不带愧疚。','做完之后停下来，感受一下做完的那几秒。不需要有意义。','选一件很久没做但以前喜欢的事——做5分钟。不是重新爱上，是让身体回忆一下。','创造一件只属于你自己的小事。它是你为自己设定的秩序。','连续三天，每天做一件"不需要被人知道"的事。','"重要"不再需要别人定义了。心里已经有了一把尺子。'] },
-  'D9': { lines: ['走回同一个路口，拐进同一条街。拿的饮料和上周是同一款。是它好喝，还是没试过别的？','在同一件事上绕了一天。把方案改了一遍，调了几个数字。存成"待定_3"——不是3就是∞。','发现自己在同一件事上试第三遍了。光标停在同一个位置。脑子里成型了，但没写新版。','换了方法从零开始写。写出来的东西不一样——角度变了，不是从老文件拆的。','走到了一条新路上。结果不太一样——不是更好不是更差，是不同。回头看了一下继续走了。','已经在新的节奏里了。走到选择时已经在走另一条路了。每个转弯都没有犹豫。'], actions: ['在一件最小的日常事上换一个选项——走另一条路回家，买一个没喝过的饮料。','在一件一直在做的事上，用一种不常用的做法——顺序调换，工具换掉。','选一件做了很久的事，停下来一天不碰它。不是解决，是观察轨迹。','重新做一次，但不参考之前任何版本。不翻旧文件，不回看记录。','走完新方向的一个完整回合——从开始到结束，不退回旧方法。','已经在走了。不需要再确认方向了。'] },
-  'D20': { lines: ['有两个选择，列了一张对比表。填了半张就停了——知道填完还是决定不了。','问了三个人，三个答案。问越多越不知道怎么选。在等第四个人出现。','把决定推迟了一周。一周后又推了一周。不是等更好的选项——是在等一个不会错的选项。不存在。','闭眼选了一个。没后悔。怕的不是选错，是选了没退路。现在知道退路是自己给的。','做了一个决定，执行了。没告诉任何人——因为不需要确认。不确定的东西，走着走着就清晰了。','不再需要"对的时机"了。时机不是等来的，是走出来的。'], actions: ['把两个选项各写一行。然后划掉一个。用笔划。','告诉一个人你的两个选项。他说话之前，你心里已经知道倾向哪个了。','选一个，执行一天。明天可以换。但今天先做这一个。','连续两天，每天执行所选方向的一个最小动作。','连续五天，每天走同一条路。五天之后你已经有数据了。','时机不是等来的。是你走出来的。'] }
-};
+  // 深度版额外4道开放题
+  const questionsDeepExtra = [
+    { id:8, text:"你每天醒来，第一个念头是什么？", options:[] },
+    { id:9, text:"如果十年后你还是现在的状态，你能接受吗？", options:[] },
+    { id:10, text:"你上一次为某件事感到“值得”是什么时候？", options:[] },
+    { id:11, text:"你觉得自己目前最大的障碍来自哪里？", options:["外部","内部","不知道"] }
+  ];
 
-let state = { step: 0, answers: [] };
-let quizStarted = false;
+  let currentQuestions = [...questionsSimple];
 
-function initQuiz() {
-  if (!quizStarted) {
-    state = { step: 0, answers: [] };
-    quizStarted = true;
+  // ===================== 判定逻辑 =====================
+  function determineJu(tian, ren, di) {
+    // 1. 升局（完美态）：三项均>70，且各项差距不大
+    if (tian > 70 && ren > 70 && di > 70) {
+      const maxVal = Math.max(tian, ren, di);
+      const minVal = Math.min(tian, ren, di);
+      if (maxVal - minVal <= 10) return '升局';
+      return '升局';
+    }
+    // 2. 困局：三项都低
+    if (tian < 40 && ren < 40 && di < 40) {
+      return '困局';
+    }
+    // 3. 离局：天、地资源尚可，但意义感（人）极低
+    if (tian > 60 && di > 60 && ren < 40) return '离局';
+    // 4. 滞局：天/地不差但停滞
+    if (tian < 50 && di < 40 && ren < 50) return '滞局';
+    // 5. 良好态升局：各项都>60
+    if (tian > 60 && ren > 60 && di > 60) return '升局';
+    // 6. 破土期：兜底
+    return '破土期';
   }
-  document.getElementById('questionContainer').style.display = 'block';
-  document.getElementById('resultSection').classList.remove('active');
-  document.getElementById('submitNote').classList.remove('active');
-  document.getElementById('followSection').style.display = 'block';
-  document.getElementById('resultProgressBar').style.display = 'none';
-  renderProgress();
-  renderStep();
-}
 
-function renderProgress() {
-  const bar = document.getElementById('progressBar');
-  bar.innerHTML = '';
-  for (let i = 0; i < 3; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'progress-dot';
-    if (i < state.step) dot.classList.add('done');
-    else if (i === state.step) dot.classList.add('active');
-    bar.appendChild(dot);
+  // ===================== 随机附注池 =====================
+  const mirrorNotesPool = {
+    '困局': [
+      '困局不是你的错。但继续困下去，是你的事。',
+      '你站在一个错误的位置上——不管怎么选，结果都差不多。',
+      '你已经意识到了。这是第一步。下一步是：搞清楚自己是怎么掉进来的。',
+      '在最深的地方，你还有一根线。不是力气——是还没彻底放弃的那一口气。',
+      '“我的人生，是从什么时候开始，连‘有意义’都算不上了，只算‘还没死’。”',
+      '你不会永远困在这里。但你要先承认你困在这里。'
+    ],
+    '离局': [
+      '你什么都有，但不知道自己为什么还要做。这不是你的错——是你的意义感被空转消耗掉了。',
+      '困局的人还会挣扎，离局的人连挣扎的理由都找不到。',
+      '你不缺资源。你缺一个“为什么”。',
+      '你不需要走出去，你需要走回来。回到那个你还知道“为什么”的时候。',
+      '最危险的局不是困局，是离局——因为你看起来一点问题都没有。',
+      '你不是没能力，你是不知道这能力该往哪用。'
+    ],
+    '滞局': [
+      '有路你也觉得那不是你的路了。先停下来。不是放弃——是攒够力气再走。',
+      '你不是没有路，你是觉得那条路不属于你。',
+      '最让人累的，不是爬坡，是站在路口等方向。',
+      '你需要的不是地图，是一面镜子。先看见自己，再看见路。',
+      '停滞也是一种选择。但你选的不是停，是“不选”。',
+      '“指南针不能替你走路。”——但你先得有指南针。'
+    ],
+    '破土期': [
+      '你在换方向了。最难的已经过去了。下一步是别停下。',
+      '脚下的土在松动，但还没完全破开。你不再问“什么时候才能走出去”——因为你已经在走了。',
+      '脚下还有碎玻璃，但你没停下来。',
+      '深夜第三次测试，屏幕上的字变了。他盯着那两个字，很久没说话。',
+      '破土期不是好日子，也不是坏日子。是“正在动”的日子。',
+      '你可能会慢，但你已经不在原地了。'
+    ],
+    '升局': [
+      '你不再问自己“什么时候才能走出去”了。因为你在走了。',
+      '升局不是结束。是另一种开始。',
+      '三个方向都还不错。不是完美——是你终于有了应对变化的余量。',
+      '当你从坑里爬出来，你的手会变得更厚。那不只是老茧——那是你爬过的证据。',
+      '升局之后，你会面对新的问题：“然后呢？”——这就是人生。',
+      '你不需要镜子了。但你可以把它递给下一个人。'
+    ]
+  };
+
+  function getMirrorNote(ju) {
+    const pool = mirrorNotesPool[ju];
+    if (!pool || pool.length === 0) {
+      return '没有一步到位的破局。你正在走的每一步，都算数。';
+    }
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    return pool[randomIndex];
   }
-}
 
-function renderStep() {
-  renderProgress();
-  const container = document.getElementById('questionContainer');
-  container.innerHTML = '';
-  const q = document.createElement('div');
-  q.className = 'question active';
-  if (state.step === 0) renderStep0(q);
-  else if (state.step === 1) renderStep1(q);
-  else if (state.step === 2) renderStep2(q);
-  container.appendChild(q);
-  // Scroll card into view
-  document.getElementById('app').scrollIntoView({behavior:'smooth', block:'start'});
-}
+  function getInterpretation(juType) {
+    const map = {
+      '困局':'你的处境是“困局”：天道在坠，人道不明，地道薄弱。这通常意味着你站在一个错误的位置上——不管怎么选，结果都差不多。好消息是：你已经意识到了。坏消息是：意识到和走出来之间，还隔着一片海。你需要先停下来，搞清楚自己是怎么掉进来的。',
+      '滞局':'你的处境是“滞局”：有路，但你觉得那不是你的路。你仍然困着——不是因为你不知道方向，是因为你已经累到不再相信“方向有用”。你需要的不是地图，是一面镜子。',
+      '离局':'你的处境是“离局”：你什么都有了，但你不确定自己还想不想待在里面。困局的人还会挣扎，离局的人连挣扎的理由都找不到。你需要问自己的不是“我该往哪走”，而是“我为什么在这里”。',
+      '破土期':'你的处境是“破土期”：已经在动了。脚下的土在松动，但还没完全破开。你不再问“我什么时候才能走出去”——因为你已经在走了。脚下还有碎玻璃，但你没停下来。',
+      '升局':'你的处境是“升局”：三个方向都还不错。不是完美——是你终于有了应对变化的余量。你不再需要一面镜子来告诉你“你在哪”了。你自己知道。接下来，你会面对新的问题——“升局之后，然后呢？”'
+    };
+    return map[juType] || '';
+  }
 
-function renderStep0(q) {
-  let opts = '';
-  MODULES.forEach((m) => {
-    opts += `<div class="option" data-value="${m.id}" onclick="selectOpt(this,'${m.id}')">
-        <span class="emoji">${m.emoji}</span>
-        <div class="text">
-          <div class="main">${m.name}</div>
-          <div class="desc">${m.desc}</div>
-          <div class="scene">${m.scene}</div>
-        </div>
-      </div>`;
-  });
-  q.innerHTML = `<div class="step-label">STEP 1 / 3</div><h2>你现在最接近哪种状态？</h2><p class="hint">选一个让你心里"嗯"了一下的。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-primary" id="btnNext0" disabled onclick="nextStep()">开始诊断 →</button></div>`;
-}
+  function getFictionExcerpt(juType) {
+    const excerpts = {
+      '困局':'“他说不清自己看到这两个字的时候是什么感觉。不是高兴，不是惊讶。是一种他已经走了三步的感觉。” ——《困局》第二章',
+      '滞局':'“阿坤看着大刘，一字一句地说：你不是没有路，你是觉得那条路不属于你。” ——第五章',
+      '离局':'“林姐在车库坐了很久。车没熄火，但她哪儿也不想去。” ——第五章',
+      '破土期':'“深夜第三次测试，屏幕上的字变了。他盯着那两个字，很久没说话。” ——第四章',
+      '升局':'“他终于明白，升局不是结束。是另一种开始。” ——第十五章'
+    };
+    return excerpts[juType] || '';
+  }
 
-function renderStep1(q) {
-  const moduleId = state.answers[0];
-  const guaList = GUA[moduleId];
-  const mod = MODULES.find(m => m.id === moduleId);
-  let opts = '';
-  guaList.forEach((g, i) => {
-    opts += `<div class="option" data-value="${i}" onclick="selectOpt(this,${i})">
-        <span class="emoji">🔍</span>
-        <div class="text"><div class="main">${g.name}</div><div class="desc">${g.desc}</div></div>
-      </div>`;
-  });
-  q.innerHTML = `<div class="step-label">STEP 2 / 3 · ${mod.emoji} ${mod.name}</div><h2>哪种情况更像你？</h2><p class="hint">不用纠结——选那个让你心里"嗯"了一下的。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-secondary" onclick="prevStep()">上一步</button><button class="btn btn-primary" id="btnNext1" disabled onclick="nextStep()">继续 →</button></div>`;
-}
+  // ===================== 评分逻辑（含深度版词库修正） =====================
+  function computeScores(answers) {
+    let tian = 50, ren = 50, di = 50;
 
-function renderStep2(q) {
-  const moduleId = state.answers[0];
-  const guaIdx = state.answers[1];
-  const gua = GUA[moduleId][guaIdx];
-  const data = LINES[gua.id];
-  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
-  let opts = '';
-  data.lines.forEach((line, i) => {
-    opts += `<div class="option" data-value="${i}" onclick="selectOpt(this,${i})">
-        <span class="emoji">📌</span>
-        <div class="text"><div class="main">${line}</div><div class="desc" style="margin-top:4px;color:#7c3aed;font-size:12px;">${pos[i]}</div></div>
-      </div>`;
-  });
-  q.innerHTML = `<div class="step-label">STEP 3 / 3 · ${gua.name}</div><h2>哪句话最像你？</h2><p class="hint">如果好几条都像——选最近一次发生的那个。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-secondary" onclick="prevStep()">上一步</button><button class="btn btn-primary" id="btnNext2" disabled onclick="showResult()">查看我的结果 →</button></div>`;
-}
+    // 第1题
+    if (answers[0] === "往上走") tian += 25;
+    else if (answers[0] === "原地踏步") tian += 5;
+    else if (answers[0] === "往下滑") tian -= 30;
+    else if (answers[0] === "在换方向") tian += 5;
 
-function selectOpt(el, value) {
-  const parent = el.closest('.options');
-  parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  state.answers[state.step] = value;
-  const btnId = ['btnNext0', 'btnNext1', 'btnNext2'][state.step];
-  const btn = document.getElementById(btnId);
-  if (btn) btn.disabled = false;
-}
+    // 第2题
+    if (answers[1] === "全部或大部分") ren += 30;
+    else if (answers[1] === "一半左右") ren += 0;
+    else if (answers[1] === "很少") ren -= 15;
+    else if (answers[1] === "几乎没有") ren -= 28;
+    else if (answers[1] === "我不知道我想做什么") ren -= 20;
 
-function nextStep() { state.step++; renderStep(); }
+    // 第3题
+    const val3 = answers[2];
+    if (val3 === "充足存款（可支撑1年+）") di += 15;
+    else if (val3 === "够撑一阵子（3-6个月）") di += 5;
+    else if (val3 === "人脉或技能可立刻变现") di += 22;
+    else if (val3 === "副业或备选方案") di += 18;
+    else if (val3 === "不知道") di -= 10;
+    else if (val3 === "什么都没有") di -= 25;
 
-function prevStep() {
-  if (state.step === 0) return;
-  state.step--;
-  state.answers.pop();
-  renderStep();
-  const btnId = ['btnNext0', 'btnNext1'][state.step];
-  const btn = document.getElementById(btnId);
-  if (btn) btn.disabled = false;
-}
+    // 第4题
+    if (answers[3] === "就在最近") ren += 20;
+    else if (answers[3] === "几个月前") ren += 10;
+    else if (answers[3] === "一年前左右") ren -= 5;
+    else if (answers[3] === "很久以前，记不清了") ren -= 15;
+    else if (answers[3] === "从未有过") ren -= 25;
 
-function showResult() {
-  document.getElementById('questionContainer').style.display = 'none';
-  document.getElementById('resultSection').classList.add('active');
-  document.getElementById('resultProgressBar').style.display = 'flex';
+    // 第5题
+    if (answers[4] === "比你好不少") tian -= 8;
+    else if (answers[4] === "差不多") tian += 2;
+    else if (answers[4] === "也困着") tian -= 5;
+    else if (answers[4] === "不想比较/不清楚") ren -= 5;
 
-  const moduleId = state.answers[0];
-  const guaIdx = state.answers[1];
-  const lineIdx = state.answers[2];
-  const gua = GUA[moduleId][guaIdx];
-  const data = LINES[gua.id];
-  const mod = MODULES.find(m => m.id === moduleId);
-  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+    // 第6题
+    if (answers[5] === "家人") ren += 8;
+    else if (answers[5] === "朋友或社会关系") ren += 5;
+    else if (answers[5] === "物质条件（房/收入等）") di += 10;
+    else if (answers[5] === "身份感（职位/社会地位）") tian += 5;
+    else if (answers[5] === "我自己——怕离开找不到方向") tian += 10;
 
-  document.getElementById('resultTitle').textContent = `${gua.name} · ${pos[lineIdx]}`;
-  document.getElementById('resultSubtitle').textContent = `你卡在「${mod.name}」区域`;
-  document.getElementById('resultDiagnosis').textContent = data.lines[lineIdx];
-  document.getElementById('resultAction').textContent = '👉 ' + data.actions[lineIdx];
-  document.getElementById('app').scrollIntoView({behavior:'smooth', block:'start'});
-}
+    // 第7题（自由输入）
+    if (answers[6] && typeof answers[6] === 'string') {
+      const w = answers[6].trim();
+      if (/破|动|走|升|光|新|静/.test(w)) tian += 4;
+      if (/累|沉|空|迷/.test(w)) ren -= 4;
+    }
 
-function checkFollowInput() {
-  const wx = document.getElementById('wechatInput').value.trim();
-  document.getElementById('btnFollow').disabled = wx.length < 2;
-}
+    // ===== 深度版词库修正 =====
+    if (state.version === 'deep' && answers.length >= 11) {
+      const negativeLexicon = ['迷茫','痛苦','无力','焦虑','累','不想','空','耗','熬','困','烦','怕','难','没劲','失望','孤独','压抑','挣扎','麻木','难受'];
+      const positiveLexicon = ['期待','坚持','会好','希望','有目标','在动','重启','愿意','做','行动','改变','突破','成长','积累','踏实','平静','接受'];
 
-function submitFollow() {
-  const wx = document.getElementById('wechatInput').value.trim();
-  if (wx.length < 2) return;
-  const email = document.getElementById('emailInput').value.trim();
-  const moduleId = state.answers[0];
-  const guaIdx = state.answers[1];
-  const lineIdx = state.answers[2];
-  const gua = GUA[moduleId][guaIdx];
-  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
-  const result = gua.name + '·' + pos[lineIdx];
+      for (let i = 7; i <= 10; i++) {
+        const answer = answers[i];
+        if (typeof answer === 'string' && answer.trim().length > 0) {
+          const text = answer;
+          negativeLexicon.forEach(word => {
+            if (text.includes(word)) {
+              const impact = word.length <= 2 ? 5 : 8;
+              ren = Math.max(0, ren - impact);
+              tian = Math.max(0, tian - (impact * 0.5));
+            }
+          });
+          positiveLexicon.forEach(word => {
+            if (text.includes(word)) {
+              const impact = word.length <= 2 ? 5 : 8;
+              ren = Math.min(100, ren + impact);
+              tian = Math.min(100, tian + (impact * 0.5));
+            }
+          });
+        }
+      }
+    }
 
-  document.getElementById('followSection').style.display = 'none';
-  const note = document.getElementById('submitNote');
-  note.innerHTML = `
-    <div style="margin-top:20px;padding:24px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);text-align:center;">
-      <div style="font-size:40px;margin-bottom:12px;">✅</div>
-      <strong style="font-size:18px;">已提交成功！</strong>
-      <p style="margin:8px 0 16px;color:var(--muted);font-size:14px;">
-        下一步：<strong>添加微信领取完整方案</strong>
-      </p>
-      <div style="padding:16px;background:#fefce8;border:1px solid #fde68a;border-radius:12px;margin-bottom:12px;">
-        <div style="font-size:24px;font-weight:700;color:#92400e;margin-bottom:4px;">lanzheren</div>
-        <div style="font-size:13px;color:var(--muted);">复制微信号 → 打开微信 → 添加朋友 → 粘贴搜索</div>
-      </div>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">
-        通过后发送你的诊断结果（如：资源枯竭·四爻），我会把完整6步方案发给你
-      </p>
-      <div style="padding:12px;background:#f3e8ff;border-radius:10px;">
-        <p style="font-size:13px;color:var(--muted);line-height:1.6;">
-          📱 也可以先关注视频号 <strong>「懒哲人」</strong><br>
-          看看别人的困局怎么走出来的
-        </p>
-      </div>
-    </div>`;
-  note.classList.add('active');
+    tian = Math.min(100, Math.max(0, tian));
+    ren = Math.min(100, Math.max(0, ren));
+    di = Math.min(100, Math.max(0, di));
+    return { tian, ren, di };
+  }
 
-  window.open(`https://tally.so/r/ZjWEpo?wechat=${encodeURIComponent(wx)}&email=${encodeURIComponent(email)}&result=${encodeURIComponent(result)}`, '_blank');
-}
+  // ===================== UI 渲染 =====================
+  const landingView = document.getElementById('landingView');
+  const testView = document.getElementById('testView');
+  const resultView = document.getElementById('resultView');
+  const questionText = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const openInputContainer = document.getElementById('openInputContainer');
+  const openInputField = document.getElementById('openInputField');
+  const questionCounter = document.getElementById('questionCounter');
+  const progressFill = document.getElementById('progressFill');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
 
-function resetQuiz() {
-  document.getElementById('followSection').style.display = 'block';
-  document.getElementById('submitNote').classList.remove('active');
-  document.getElementById('submitNote').innerHTML = '';
-  document.getElementById('wechatInput').value = '';
-  document.getElementById('emailInput').value = '';
-  document.getElementById('btnFollow').disabled = true;
-  state = { step: 0, answers: [] };
-  quizStarted = false;
-  initQuiz();
-}
+  window.selectVersion = (version) => {
+    state.version = version;
+    document.getElementById('versionSimple').classList.remove('active');
+    document.getElementById('versionDeep').classList.remove('active');
+    if(version==='simple') document.getElementById('versionSimple').classList.add('active');
+    else document.getElementById('versionDeep').classList.add('active');
+  };
+
+  window.startTest = () => {
+    state.currentStep = 0;
+    const total = state.version==='simple' ? 7 : 11;
+    state.answers = new Array(total).fill('');
+    currentQuestions = state.version==='simple' ? [...questionsSimple] : [...questionsSimple, ...questionsDeepExtra];
+    state.totalQuestions = currentQuestions.length;
+    landingView.classList.add('hidden');
+    resultView.classList.add('hidden');
+    testView.classList.remove('hidden');
+    renderQuestion();
+  };
+
+  function renderQuestion() {
+    const q = currentQuestions[state.currentStep];
+    questionCounter.textContent = `第 ${state.currentStep+1} / ${state.totalQuestions} 题`;
+    progressFill.style.width = ((state.currentStep+1)/state.totalQuestions*100)+'%';
+    questionText.textContent = `Q${q.id}. ${q.text}`;
+
+    optionsContainer.innerHTML = '';
+    openInputContainer.classList.add('hidden');
+
+    if(q.options && q.options.length>0) {
+      q.options.forEach(opt => {
+        const optDiv = document.createElement('div');
+        optDiv.className = 'option-item';
+        if(state.answers[state.currentStep] === opt) optDiv.classList.add('selected');
+        optDiv.textContent = opt;
+        optDiv.onclick = () => {
+          document.querySelectorAll('.option-item').forEach(el=>el.classList.remove('selected'));
+          optDiv.classList.add('selected');
+          state.answers[state.currentStep] = opt;
+        };
+        optionsContainer.appendChild(optDiv);
+      });
+    } else {
+      openInputContainer.classList.remove('hidden');
+      openInputField.value = state.answers[state.currentStep] || '';
+      openInputField.oninput = (e) => {
+        state.answers[state.currentStep] = e.target.value;
+      };
+      // Enter键导航
+      openInputField.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          nextQuestion();
+        }
+      };
+    }
+
+    prevBtn.style.visibility = state.currentStep===0 ? 'hidden' : 'visible';
+    nextBtn.textContent = state.currentStep===state.totalQuestions-1 ? '提交 →' : '下一步 →';
+  }
+
+  window.prevQuestion = () => {
+    if(state.currentStep>0) {
+      if(openInputField && !openInputContainer.classList.contains('hidden')) {
+        state.answers[state.currentStep] = openInputField.value;
+      }
+      state.currentStep--;
+      renderQuestion();
+    }
+  };
+
+  window.nextQuestion = () => {
+    if(openInputField && !openInputContainer.classList.contains('hidden')) {
+      state.answers[state.currentStep] = openInputField.value;
+    }
+    if(currentQuestions[state.currentStep].options.length>0 && !state.answers[state.currentStep]) {
+      alert('请选择一个选项');
+      return;
+    }
+    if(state.currentStep < state.totalQuestions-1) {
+      state.currentStep++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function computeAxisLabel(tian, ren, di) {
+    let tianLabel = '不明', renLabel = '不明', diLabel = '薄弱';
+    if(tian < 30) tianLabel = '下坠';
+    else if(tian < 55) tianLabel = '平稳';
+    else if(tian < 80) tianLabel = '构建中';
+    else tianLabel = '上升';
+
+    if(ren < 30) renLabel = '空了';
+    else if(ren < 55) renLabel = '不明';
+    else if(ren < 80) renLabel = '明晰';
+    else renLabel = '深耕中';
+
+    if(di < 30) diLabel = '薄弱';
+    else if(di < 55) diLabel = '普通';
+    else if(di < 80) diLabel = '扎实';
+    else diLabel = '传递中';
+    return { tianLabel, renLabel, diLabel };
+  }
+
+  function showResult() {
+    testView.classList.add('hidden');
+    resultView.classList.remove('hidden');
+
+    const scores = computeScores(state.answers);
+    const ju = determineJu(scores.tian, scores.ren, scores.di);
+    const { tianLabel, renLabel, diLabel } = computeAxisLabel(scores.tian, scores.ren, scores.di);
+
+    document.getElementById('resultTypeName').textContent = ju;
+    document.getElementById('interpretationText').textContent = getInterpretation(ju);
+    document.getElementById('mirrorNote').textContent = getMirrorNote(ju);
+    document.getElementById('fictionExcerpt').innerHTML = `📖 ${getFictionExcerpt(ju)}<br><span style="color:#8B7355; cursor:pointer;">阅读完整章节 →</span>`;
+
+    const dimDiv = document.getElementById('dimensionsDisplay');
+    dimDiv.innerHTML = `
+      <div class="dimension-row"><span class="dim-label">天道</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${scores.tian}%"></div></div><span>${tianLabel}</span></div>
+      <div class="dimension-row"><span class="dim-label">人道</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${scores.ren}%"></div></div><span>${renLabel}</span></div>
+      <div class="dimension-row"><span class="dim-label">地道</span><div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${scores.di}%"></div></div><span>${diLabel}</span></div>
+    `;
+  }
+
+  window.restartTest = () => {
+    resultView.classList.add('hidden');
+    landingView.classList.remove('hidden');
+  };
+
+  window.saveResult = () => {
+    alert('结果已保存至本地（模拟）');
+  };
+  window.shareResult = () => {
+    alert('分享功能（模拟）');
+  };
+
+  // 默认选中精简版
+  selectVersion('simple');
+})();
 </script>
 </body>
 </html>
