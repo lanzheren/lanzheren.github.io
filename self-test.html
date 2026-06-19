@@ -2,271 +2,781 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>困局自测 · 懒哲人</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>破困定位 · 5分钟找到你的真实困境</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#f5f0e8;font-family:'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Heiti SC','SimHei',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:16px}
-.container{max-width:420px;width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(44,40,34,0.08);padding:32px 24px;margin-bottom:40px}
-h1{font-size:22px;font-weight:700;color:#2c2822;letter-spacing:2px;text-align:center}
-.sub{font-size:13px;color:#8a7a60;text-align:center;margin:6px 0 24px;letter-spacing:1px}
+  :root {
+    --bg: #f7f5f2;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --accent: #c0392b;
+    --accent2: #7c3aed;
+    --border: #e5e7eb;
+    --shadow: 0 4px 24px rgba(0,0,0,0.06);
+    --radius: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 680px; margin: 0 auto; padding: 20px; }
 
-.steps{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
-.step-dot{width:10px;height:10px;border-radius:50%;background:#e8e0d0;transition:all 0.3s}
-.step-dot.active{background:#d4a843;width:28px;border-radius:5px}
-.step-dot.done{background:#6a9a6a}
-.step-label{text-align:center;font-size:11px;color:#b8a888;letter-spacing:1px;margin-bottom:4px}
-.progress-bar{height:4px;background:#e8e0d0;border-radius:2px;margin-bottom:24px;overflow:hidden}
-.progress-fill{height:100%;background:#d4a843;transition:width 0.4s ease;width:0%}
+  .trust-bar {
+    display: flex; justify-content: center; gap: 24px;
+    padding: 10px 0 6px;
+    font-size: 12px; color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .trust-bar span { display: flex; align-items: center; gap: 4px; }
 
-.page{display:none}.page.active{display:block;animation:fadeIn 0.35s}
+  .hero {
+    text-align: center;
+    padding: 32px 0 20px;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: #fce8e6; color: var(--accent);
+    font-size: 12px; font-weight: 600;
+    padding: 4px 14px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 36px; font-weight: 700;
+    letter-spacing: -0.5px; line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero .value-prop {
+    font-size: 18px; font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .hero .sub {
+    font-size: 15px; color: var(--muted);
+    max-width: 480px; margin: 0 auto 4px;
+  }
+  .hero .free-tag {
+    display: inline-block;
+    margin-top: 12px;
+    background: #fefce8; color: #92400e;
+    font-size: 13px; font-weight: 600;
+    padding: 6px 18px; border-radius: 20px;
+    border: 1px solid #fde68a;
+  }
 
-.q-title{font-size:17px;font-weight:600;color:#2c2822;letter-spacing:1px;margin-bottom:18px;line-height:1.5}
-.options{display:flex;flex-direction:column;gap:10px}
-.option{display:block;padding:14px 18px;border:2px solid #e8e0d0;border-radius:8px;cursor:pointer;font-size:15px;color:#5a4a3a;transition:all 0.2s;text-align:center}
-.option:hover{border-color:#d4a843;background:rgba(212,168,67,0.04)}
-.option.selected{border-color:#d4a843;background:rgba(212,168,67,0.1);color:#2c2822;font-weight:600}
-.nav{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
-.nav button{flex:1;padding:12px;border:none;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;font-family:inherit;transition:all 0.2s}
-.btn-prev{background:#e8e0d0;color:#8a7a60}
-.btn-next{background:#d4a843;color:#fff}
-.btn-next:disabled{background:#e8e0d0;color:#b8a888;cursor:not-allowed}
+  /* Story cards */
+  .stories { max-width: 680px; margin: 0 auto 16px; padding: 0 20px; }
+  .story-card {
+    margin-bottom: 10px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .story-summary {
+    cursor: pointer;
+    padding: 16px 20px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .story-summary::-webkit-details-marker { display: none; }
+  .story-summary .arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .story-card[open] .story-summary .arrow { transform: rotate(90deg); }
+  .story-body {
+    padding: 0 20px 20px;
+    line-height: 1.8;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .story-body .step-tag {
+    display: inline-block;
+    font-size: 11px;
+    background: #f3e8ff;
+    color: #7c3aed;
+    padding: 2px 10px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
 
-/* 结果头 */
-.result-icon{font-size:48px;text-align:center;margin-bottom:8px}
-.result-title{font-size:16px;font-weight:600;text-align:center;color:#8a7a60;letter-spacing:1px}
-.result-gua{font-size:24px;font-weight:900;text-align:center;letter-spacing:4px;margin:6px 0}
-.result-desc{font-size:14px;color:#5a4a3a;line-height:1.8;text-align:center;margin:6px 0 12px;padding:14px;background:#faf5ea;border-radius:6px}
-.answer-label{font-size:11px;color:#b8a888;text-align:center;letter-spacing:1px;margin-bottom:4px}
-.answer-strip{font-size:24px;font-weight:700;text-align:center;letter-spacing:8px;margin:4px 0 12px}
+  /* Card */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    margin-bottom: 20px;
+  }
 
-/* 售前区 */
-.presale{margin-top:24px;padding-top:20px;border-top:2px solid #e8e0d0}
-.presale h3{font-size:16px;font-weight:700;color:#2c2822;letter-spacing:1px;margin-bottom:6px}
-.presale .subhead{font-size:12px;color:#8a7a60;letter-spacing:0.5px;margin-bottom:14px;line-height:1.6}
+  .progress-bar {
+    display: flex; gap: 6px;
+    margin-bottom: 28px;
+  }
+  .progress-dot {
+    flex: 1; height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .progress-dot.active { background: var(--accent); }
+  .progress-dot.done { background: var(--accent2); }
 
-/* 产品卡片 */
-.product-card{padding:14px;border-radius:8px;border:1px solid #e8e0d0;margin-bottom:12px}
-.product-card.pc-free{border-left:4px solid #6a9a6a}
-.product-card.pc-basic{border-left:4px solid #b8b0a0}
-.product-card.pc-pro{border-left:4px solid #d4a843}
-.product-card.pc-consult{border-left:4px solid #8b1a1a;background:#faf5ea}
-.product-card .p-cat{font-size:10px;color:#8a7a60;letter-spacing:1px;margin-bottom:2px}
-.product-card .p-title{font-size:14px;font-weight:700;color:#2c2822}
-.product-card .p-price{font-size:22px;font-weight:900;color:#2c2822;margin:2px 0}
-.product-card .p-price small{font-size:12px;font-weight:400;color:#8a7a60}
-.product-card .p-desc{font-size:11px;color:#8a7a60;line-height:1.5;margin:4px 0}
-.product-card .p-action{display:inline-block;margin-top:6px;padding:6px 16px;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:1px}
-.p-action.green{background:#6a9a6a;color:#fff}
-.p-action.gold{background:#d4a843;color:#fff}
-.p-action.outline{border:1px solid #d4a843;color:#d4a843;background:transparent}
+  .step-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
 
-/* 样卡展示 */
-.samples{margin-bottom:18px}
-.sample-card{background:#faf5ea;border-radius:6px;padding:12px;margin-bottom:8px}
-.sample-card .tag{font-size:9px;color:#8a7a60;letter-spacing:1px;margin-bottom:2px;text-align:left}
-.sample-card .quote{font-size:12px;line-height:1.6;color:#2c2822;letter-spacing:0.5px;padding:6px 8px;background:#fff;border-radius:4px}
-.sample-card .from{font-size:9px;color:#b8a888;text-align:right;margin-top:2px;letter-spacing:0.5px}
+  .question { display: none; }
+  .question.active { display: block; }
+  .question h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .question .hint { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
 
-.contact-bar{text-align:center;padding:14px;background:#2c2822;border-radius:8px;color:#fcf8f0;margin-top:8px}
-.contact-bar .c-title{font-size:15px;font-weight:700;letter-spacing:2px}
-.contact-bar .c-desc{font-size:11px;color:#b8a888;margin:4px 0;letter-spacing:0.5px;line-height:1.5}
-.contact-bar .c-btn{display:inline-block;margin-top:6px;padding:10px 32px;background:#d4a843;color:#2c2822;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px}
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .option:hover { border-color: var(--accent); background: #fef2f0; }
+  .option.selected { border-color: var(--accent); background: #fef2f0; }
+  .option .emoji { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .option .text { flex: 1; }
+  .option .text .main { font-size: 15px; font-weight: 500; }
+  .option .text .desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
-.tag{text-align:center;margin-top:16px;font-size:10px;color:#b8a888;letter-spacing:1px;line-height:1.8}
-.free-note{text-align:center;margin-top:12px;padding:8px;font-size:10px;color:#b8a888;letter-spacing:0.5px;line-height:1.5;border-top:1px solid #e8e0d0}
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    padding: 12px 28px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; flex: 1;
+  }
+  .btn-primary {
+    background: var(--accent); color: white;
+    font-size: 16px; padding: 14px 28px;
+  }
+  .btn-primary:hover { background: #a93226; }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
 
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  /* Result */
+  .result-section { display: none; }
+  .result-section.active { display: block; }
+
+  .result-header { text-align: center; margin-bottom: 24px; }
+  .result-header .badge {
+    display: inline-block;
+    background: #f3e8ff; color: #7c3aed;
+    font-size: 12px; font-weight: 600;
+    padding: 4px 14px; border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .result-header h2 { font-size: 24px; }
+  .result-header .sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  .result-box {
+    background: #faf5ff; border: 2px solid #e9d5ff;
+    border-radius: 12px; padding: 20px;
+    margin-bottom: 16px;
+  }
+  .result-box .label {
+    font-size: 11px; font-weight: 600; color: #7c3aed;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .result-box .content { font-size: 15px; line-height: 1.7; color: var(--text); }
+  .result-box.action {
+    background: #fef2f0; border-color: #fecaca;
+  }
+  .result-box.action .label { color: #c0392b; }
+
+  /* Peer social proof */
+  .peer-proof {
+    margin: 16px 0;
+    padding: 14px 18px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #166534;
+  }
+
+  /* Follow section */
+  .follow-section {
+    background: linear-gradient(135deg, #fefce8, #fef9c3);
+    border: 2px solid #fde68a;
+    border-radius: 12px; padding: 24px 20px;
+    margin-top: 20px;
+  }
+  .follow-section .gift-badge {
+    display: inline-block;
+    background: #92400e; color: white;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 4px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .follow-section h3 {
+    font-size: 17px; font-weight: 700;
+    margin-bottom: 4px; color: #1a1a2e;
+  }
+  .follow-section .sub {
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .follow-section .value-list {
+    background: white; border-radius: 10px;
+    padding: 14px 18px; margin-bottom: 16px;
+    font-size: 14px; line-height: 1.8;
+  }
+  .follow-section .input-group {
+    display: flex; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .follow-section input {
+    flex: 1; padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px; font-size: 15px;
+    outline: none; transition: border 0.2s;
+  }
+  .follow-section input:focus { border-color: var(--accent); }
+  .follow-section .btn-follow {
+    padding: 12px 24px; white-space: nowrap;
+    background: #92400e; color: white;
+    border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .follow-section .btn-follow:hover { background: #78350f; }
+  .follow-section .btn-follow:disabled { background: #ccc; cursor: not-allowed; }
+  .follow-section .safe-note {
+    font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 6px;
+  }
+  .follow-section .alt-group {
+    margin-top: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 10px;
+  }
+  .follow-section .alt-group .label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .follow-section .wechat-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px;
+    background: #f3f4f6; border-radius: 10px;
+    font-size: 14px; color: var(--text);
+    margin-top: 10px;
+  }
+
+  .submit-note {
+    display: none;
+    margin-top: 12px;
+    padding: 14px 18px;
+    background: #fef2f0;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #c0392b;
+    line-height: 1.6;
+  }
+  .submit-note.active { display: block; }
+
+  .reset-link {
+    display: block; text-align: center;
+    margin-top: 16px;
+    font-size: 13px; color: var(--muted);
+    text-decoration: underline; cursor: pointer;
+  }
+  .reset-link:hover { color: var(--accent); }
+
+  .footer {
+    text-align: center; padding: 24px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 28px; }
+    .hero .value-prop { font-size: 16px; }
+    .card { padding: 20px 16px; }
+    .follow-section .input-group { flex-direction: column; }
+    .trust-bar { gap: 12px; font-size: 11px; }
+  }
 </style>
 </head>
 <body>
+
 <div class="container">
 
-  <h1>困局自测</h1>
-  <div class="sub">6道题，凭直觉选是或不是</div>
+<div class="trust-bar">
+  <span>🔒 信息加密 · 绝不外泄</span>
+  <span>⏱ 仅需5分钟</span>
+  <span>🎁 免费 · 无需注册</span>
+  <span>📖 基于懒哲人破困体系</span>
+</div>
 
-  <div class="steps" id="steps">
-    <div class="step-dot active"></div>
-    <div class="step-dot"></div>
-  </div>
-  <div class="step-label" id="stepLabel">第 1 步：答题</div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="hero">
+  <div class="badge">已有人在这里找到方向</div>
+  <h1>5分钟找到你的 <span>真实困境</span></h1>
+  <div class="value-prop">然后拿到今天就能做的第一个动作</div>
+  <p class="sub">不是泛泛的"振作起来"——是一句让你觉得"这说的就是我"的诊断，和一个你今晚就能做的事。</p>
+  <div class="free-tag">🎁 免费 · 完整报告含6条行路篇动作</div>
+</div>
 
-  <!-- 答题页 -->
-  <div class="page active" id="pageQuiz">
-    <div class="quiz-area" id="quizArea"></div>
-    <div class="nav">
-      <button class="btn-prev" id="prevBtn" onclick="prevQ()" style="display:none">← 上一题</button>
-      <button class="btn-next" id="nextBtn" onclick="nextQ()" disabled>下一题 →</button>
+<!-- Stories -->
+<div class="stories">
+  <div style="font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;">── 他们的故事 ──</div>
+
+  <details class="story-card">
+    <summary class="story-summary">
+      <span style="font-size:24px;">👩</span>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:15px;">"我每天哄完孩子，一个人在客厅坐到凌晨"</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开她的故事</div>
+      </div>
+      <span class="arrow">▶</span>
+    </summary>
+    <div class="story-body">
+      <p>小陈，32岁，孩子两岁半。白天上班，晚上带娃，周末还要应付双方父母。</p>
+      <p>她说她最怕的不是累——是累到睡不着。每天哄完孩子已经十一点，明明困得不行，但躺在沙发上刷手机，一刷就到凌晨两点。"不是不想睡，是不敢睡。闭上眼睛，明天就要来了。"</p>
+      <p>她填了破困定位，系统给她匹配到<strong>「过载崩塌 · 初爻」</strong>。</p>
+      <p>诊断画面让她愣住了：<em>"你连续几周每天睡眠不到五小时。早上的第一反应不是新的一天开始了——而是今天又要应付完。"</em></p>
+      <p>她说看到这句话的时候，眼泪就下来了。"第一次有人把我心里那点事写出来了。"</p>
+      <p>今日动作只有一句话：<strong>"今晚提前15分钟放下手机，放在另一个房间充电。"</strong></p>
+      <p>"我当时想，15分钟有什么用？但那天晚上我真的试了。手机放客厅，躺在床上的时候，我发现自己其实已经很久没有在安静里待过了。"</p>
+      <p><strong>那一晚她睡了6个小时。不是很多，但这是她三个月来睡得最长的一次。</strong></p>
+      <div class="step-tag">已获取完整6步方案 · 目前在第4步</div>
     </div>
-  </div>
+  </details>
 
-  <!-- 结果+售前页 -->
-  <div class="page" id="pageResult">
-    <div class="result-icon">🔮</div>
-    <div class="result-title">你的困局类型</div>
-    <div class="result-gua" id="resultGua"></div>
-    <div class="result-desc" id="resultDesc"></div>
-    <div class="answer-label">你的回答</div>
-    <div class="answer-strip" id="answerStrip"></div>
-
-    <!-- 售前区 -->
-    <div class="presale" id="presaleArea" style="display:none">
-
-      <h3>针对你的困局，我能做什么</h3>
-      <div class="subhead" id="personalizedIntro"></div>
-
-      <!-- 免费产品 -->
-      <div class="product-card pc-free">
-        <div class="p-cat">🆓 免费 · 先诊断</div>
-        <div class="p-title">领取专业问卷</div>
-        <div class="p-desc">这份6题自测只是初步判断。我有一份更专业的16题问卷，能精准定位你的困局坐标。添加微信即可免费领取。</div>
-        <button class="p-action green" onclick="copyContact()">添加懒哲人 · 免费领 →</button>
+  <details class="story-card">
+    <summary class="story-summary">
+      <span style="font-size:24px;">👨‍💼</span>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:15px;">"工资到账的那一刻，我还完信用卡，余额是0"</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开他的故事</div>
       </div>
+      <span class="arrow">▶</span>
+    </summary>
+    <div class="story-body">
+      <p>阿强，28岁，在广州做仓库管理。每月工资4800，房租1200，伙食1000，花呗800，剩下的不够买一张回家的高铁票。</p>
+      <p>他说他最怕的不是穷——是算账。"每次打开手机银行，看到余额那个数字，我就锁屏放回去了。假装没看过。"</p>
+      <p>填了破困定位，系统匹配到<strong>「资源枯竭 · 四爻」</strong>。</p>
+      <p>诊断画面：<em>"你打开手机银行看了一眼余额，然后把手机锁屏，放回兜里——你假装自己没看过。但你站起来接水的时候，顺手把外卖软件里所有三十块以上的套餐都划掉了。"</em></p>
+      <p>阿强看完沉默了一会儿。"这不就是我吗。"</p>
+      <p>今日动作：<strong>"算一笔账：你最大的一笔非必要支出是什么？看见了就算做完。"</strong></p>
+      <p>他算了。最大的一笔非必要支出是——每周三次的外卖咖啡，一个月花掉360块。</p>
+      <p>"我以前没算过，觉得一杯咖啡十几块钱能贵到哪去。但360块是我一个月的话费加水电了。"</p>
+      <p><strong>他没有戒咖啡，但他开始自己冲了。一个月省了200块。</strong></p>
+      <div class="step-tag">已获取完整6步方案 · 目前在第2步</div>
+    </div>
+  </details>
 
-      <!-- 付费产品1: 能量卡 -->
-      <div class="product-card pc-basic">
-        <div class="p-cat">💎 付费 · 专属能量卡</div>
-        <div class="p-title">36条专属内容 + HTML网页</div>
-        <div class="p-price">199 <small>元/套</small></div>
-        <div class="p-desc">36条专属于你的内容，生成一个可以直接截图发朋友圈/小红书的网页。自带评论区引导语，可以编辑修改。</div>
-        <button class="p-action gold" onclick="copyContact()">加微信了解 →</button>
+  <details class="story-card">
+    <summary class="story-summary">
+      <span style="font-size:24px;">👔</span>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:15px;">"年入百万，但每天晚上在车里坐半小时才上楼"</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击展开他的故事</div>
       </div>
+      <span class="arrow">▶</span>
+    </summary>
+    <div class="story-body">
+      <p>杨哥，38岁，互联网公司总监。年入百万，有房有车有家庭。在外人看来，他什么都有了。</p>
+      <p>但他每天下班到车库之后，要在车里坐半个小时才上楼。不是什么都没做——就是坐在那里，刷手机，发呆。等那个"上楼回到生活里"的动力攒够了，才开门。</p>
+      <p>"不是不爱我老婆孩子，是那个门推开的瞬间，我要切换成另一个人。好丈夫、好爸爸——演了一天了，还要再演一晚上。"</p>
+      <p>系统匹配到<strong>「丰盛虚无 · 初爻」</strong>。</p>
+      <p>诊断画面：<em>"别人说'你已经很成功了'。你点了点头——不是因为同意，是懒得解释。"</em></p>
+      <p>他看到这句话的时候，把手机放下了。过了一会儿才拿起来继续看。</p>
+      <p>今日动作：<strong>"今晚允许自己不做任何需要有意义的事——躺平一小时，不带愧疚。"</strong></p>
+      <p>他试了。那天晚上他没有加班，没有看行业资讯，没有规划周末行程。他躺在沙发上，看了一部不需要动脑子的电影。</p>
+      <p><strong>"我发现自己很久没有做过'没有目的'的事了。那一小时里，我什么都没有想——但我觉得我在活着。"</strong></p>
+      <div class="step-tag">已获取完整6步方案 · 目前在第3步</div>
+    </div>
+  </details>
+</div>
 
-      <!-- 付费产品2: 一对一方案 -->
-      <div class="product-card pc-consult">
-        <div class="p-cat">🔥 核心服务 · 一对一深度方案</div>
-        <div class="p-title">完整困局诊断 + 发展策略</div>
-        <div class="p-price">面议</div>
-        <div class="p-desc">像蔡生那样的全套服务——填专业问卷 → 我亲自用三分法深度分析你的困局 → 出一份完整的个人发展方案。不只给你卡，是给你一条路。</div>
-        <button class="p-action gold" onclick="copyContact()">预约一对一 →</button>
-      </div>
+<!-- Assessment -->
+<div class="card" id="app">
+  <div class="progress-bar" id="progressBar"></div>
 
-      <!-- 样卡展示 -->
-      <h3 style="margin-top:16px">别人做出来的样子</h3>
-      <div class="samples">
-        <div class="sample-card">
-          <div class="tag">✨ 她能能量卡 · 给宝妈</div>
-          <div class="quote">「你按他们说的做，他们就不用操心了。你是最了解自己处境的人。」</div>
-          <div class="from">—— 一位开文胸工厂的宝妈</div>
-        </div>
-        <div class="sample-card">
-          <div class="tag">💪 江湖人能量卡 · 给兄弟</div>
-          <div class="quote">「以前觉得肩膀不够宽，扛不住生活的重量。后来才懂，肩膀是扛着扛着就宽了。」</div>
-          <div class="from">—— 一位在工地干了二十年的老哥</div>
-        </div>
-        <div class="sample-card">
-          <div class="tag">🧘 破困笺 · 懒哲人</div>
-          <div class="quote">「鞍都备好了，马就是不走。收绳。抬头。给马一个眼神。它懂的。」</div>
-          <div class="from">—— 懒哲人 · 三分法创始人</div>
-        </div>
-      </div>
+  <div id="questionContainer"></div>
 
-      <!-- 联系栏 -->
-      <div class="contact-bar">
-        <div class="c-title">加懒哲人微信</div>
-        <div class="c-desc" style="font-size:16px;font-weight:700;color:#d4a843;letter-spacing:2px;margin:6px 0">lanzheren</div>
-        <div class="c-desc">复制结果后，打开微信搜索这个ID即可添加<br>或截图这个页面，微信扫一扫</div>
-        <button class="c-btn" onclick="copyContact()">① 复制结果 → ② 去微信搜索 lanzheren</button>
-      </div>
-
+  <!-- Result -->
+  <div class="result-section" id="resultSection">
+    <div class="progress-bar" id="resultProgressBar" style="display:none;">
+      <div class="progress-dot done"></div>
+      <div class="progress-dot done"></div>
+      <div class="progress-dot done"></div>
     </div>
 
-    <div class="free-note">截图这个结果，以后想做随时来 · 小红书「观察懒人」</div>
-    <div class="tag">懒哲人 · 三分法 · 困局诊断</div>
+    <div class="result-header">
+      <div class="badge">🎯 定位完成 · 你的专属结果</div>
+      <h2 id="resultTitle"></h2>
+      <p class="sub" id="resultSubtitle"></p>
+    </div>
+
+    <div class="result-box">
+      <div class="label">📖 诊断结果</div>
+      <div class="content" id="resultDiagnosis"></div>
+    </div>
+
+    <div class="result-box action">
+      <div class="label">👉 今日动作</div>
+      <div class="content" id="resultAction"></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted);padding-top:12px;border-top:1px dashed #fecaca;">
+        💡 明天回来测下一个动作 → 6条爻辞对应6个动作，一天做一个<br>
+        基于懒哲人破困体系 · 每个诊断对应真实人生场景，不是随机生成
+      </div>
+    </div>
+
+    <!-- Peer social proof -->
+    <div class="peer-proof">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:16px;">👥</span>
+        <span style="font-weight:600;">和你同样困局的人也在行动</span>
+      </div>
+      <div style="line-height:1.7;">
+        • 有人看到"今晚提前15分钟放下手机"后，真的设了闹钟<br>
+        • 有人写下了"最低需要多少钱活一个月"，第一次面对那个数字<br>
+        • 有人对家里说了第一次"不"，发现天没塌
+      </div>
+    </div>
+
+    <!-- Follow -->
+    <div class="follow-section" id="followSection">
+      <div class="gift-badge">🎁 免费领取</div>
+      <h3>你的专属6步破困方案已生成</h3>
+      <p class="sub">输入微信号，免费获取完整版</p>
+
+      <div class="value-list">
+        <div class="item">✅ 你当前困卦的 <strong>全部6条行路篇动作</strong></div>
+        <div class="item">✅ 后续根据你的反馈 <strong>做个性化调整</strong></div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="wechatInput" placeholder="你的微信号" oninput="checkFollowInput()">
+        <button class="btn-follow" id="btnFollow" disabled onclick="submitFollow()">免费领取 →</button>
+      </div>
+
+      <div class="safe-note">🔒 信息仅用于发送破困方案 · 随时可取消</div>
+
+      <!-- Email alt -->
+      <div class="alt-group">
+        <div class="label">📧 或用邮箱接收</div>
+        <div class="input-group">
+          <input type="email" id="emailInput" placeholder="你的邮箱" oninput="checkEmailInput()">
+          <button class="btn-follow" id="btnEmail" disabled onclick="submitEmail()" style="background:#7c3aed;">发送 →</button>
+        </div>
+        <div class="safe-note">🔒 信息仅用于发送方案 · 随时可取消</div>
+      </div>
+
+      <div class="wechat-link">
+        <span style="font-size:20px;">📱</span>
+        <span>微信视频号关注 <strong>「懒哲人」</strong>，每天一条破困内容 + 后续动作提醒</span>
+      </div>
+    </div>
+
+    <!-- Submit note (replaces "thank you" auto-show) -->
+    <div class="submit-note" id="submitNote">
+      <strong>✅ 已提交</strong><br>
+      请在新打开的页面完成填写，我们就会把完整方案发给你。<br>
+      <span style="font-size:13px;color:var(--muted);">没看到新页面？<a href="https://tally.so/r/ZjWEpo" target="_blank" style="color:#7c3aed;">点这里打开 →</a></span>
+    </div>
+
+    <a class="reset-link" onclick="resetQuiz()">重新测一次</a>
   </div>
+</div>
+
+<div class="footer">
+  懒哲人破困体系 · 让更多的小人物破困
+</div>
 
 </div>
 
 <script>
-const questions = [
-  { id:1, dim:"tian", text:"1. 你做的事，大方向是对的吗？" },
-  { id:2, dim:"tian", text:"2. 外面的变化，你感觉自己跟得上？" },
-  { id:3, dim:"di", text:"3. 你手头的资源，够你撑半年吗？" },
-  { id:4, dim:"di", text:"4. 你现在的条件，能让你放手一搏吗？" },
-  { id:5, dim:"ren", text:"5. 你心里清楚下一步该做什么？" },
-  { id:6, dim:"ren", text:"6. 你每天都在朝那个方向动？" }
+// ==================== DATA ====================
+const MODULES = [
+  { id: 'economy', emoji: '💰', name: '缺钱', desc: '收入撑不住、负债、不知道靠什么赚钱' },
+  { id: 'health', emoji: '😴', name: '缺力', desc: '长期疲劳、失眠、身体在报警、动不了' },
+  { id: 'relation', emoji: '🤝', name: '缺人', desc: '被消耗、孤独、讨好、害怕社交' },
+  { id: 'order', emoji: '😶', name: '没意思', desc: '不知道我是谁、没意义、漂泊、心里空' },
+  { id: 'action', emoji: '⚡', name: '缺行动力', desc: '拖延、惯性绕圈、害怕做错、无法完成' }
 ];
 
-const results = {
-  "+++":{ gua:"乾为天 · 亢龙有悔", intro:"你条件好、方向对、行动力也强。但你最需要的是——别飘。", desc:"你什么都有，就是有点飘。方向对、条件够、行动力也强——但你可能忘了自己也是凡人。"},
-  "++-":{ gua:"泽水困 · 空转困局", intro:"你有条件，但没动。你需要有人推你一把。", desc:"条件挺好，但你在原地打转。有方向有资源，就是不动——再好的牌不打也会烂。"},
-  "+-+":{ gua:"水雷屯 · 创始艰难", intro:"你有方向也肯干，但底子薄。你需要的是撑过去。", desc:"方向对，也肯干，但底子太薄。万事开头难，熬过去就是另一片天。"},
-  "+--":{ gua:"山水蒙 · 启蒙迷茫", intro:"你知道有利可图，但不知道怎么下手。你需要的是带路的人。", desc:"有利可图，但你不知道从哪下手。你缺的不是机会，缺的是带路的人。"},
-  "-++":{ gua:"水天需 · 待时之困", intro:"你有资源有能力，但大势没到。你需要的是沉住气。", desc:"你有资源有能力，但大势还没到。现在不是硬冲，是等风来。"},
-  "-+-":{ gua:"天地否 · 被困之局", intro:"环境不好，你也不差，但你不不动。你需要的是有人推一把。", desc:"环境很差，你也不差条件，但你就是不动。你在等什么？"},
-  "--+":{ gua:"坎为水 · 硬扛之局", intro:"啥都没有，但你在硬撑。你需要的是被看见。", desc:"啥都没有，但你在硬撑。环境不好、资源不够——但你还没倒。"},
-  "---":{ gua:"艮为山 · 卡住之局", intro:"上不去也下不来。你需要的是先看清楚再走。", desc:"上不去也下不来。卡在中间，动不了也停不下来。"}
+const GUA = {
+  economy: [
+    { id: 'T1', name: '资源枯竭', desc: '钱在缩，每天都在算还能撑多久。选项越来越窄。' },
+    { id: 'D18', name: '持续失血', desc: '钱不知道漏哪去了。没乱花，但月底一算又超了。' },
+    { id: 'H13', name: '不敢开价', desc: '一直说"好"，从不谈价格。你的付出值更多，但不敢开口。' },
+    { id: 'T3', name: '开局卡死', desc: '刚辞职/刚毕业/想转行，第一步迈不出去。' }
+  ],
+  health: [
+    { id: 'D5', name: '过载崩塌', desc: '已经超负荷太久了。身体在用症状跟你说话。' },
+    { id: 'H8', name: '停滞钝化', desc: '太久没动了。不是不想动，是启动开关找不到了。' },
+    { id: 'H14', name: '愉悦上瘾', desc: '不用刷手机/吃/买就撑不下去。停不下来。' }
+  ],
+  relation: [
+    { id: 'D14', name: '亲情绑架', desc: '被家人用"应该"和"必须"捆住了。' },
+    { id: 'D16', name: '婚姻消耗', desc: '在一段关系里撑了很久。进退都痛。' },
+    { id: 'H12', name: '漂泊无根', desc: '在哪都像外人。没有地方叫"回去"。' }
+  ],
+  order: [
+    { id: 'H1', name: '身份迷失', desc: '旧的标签掉了，新的还没长出来。' },
+    { id: 'H11', name: '丰盛虚无', desc: '什么都有了，但什么都不重要。' }
+  ],
+  action: [
+    { id: 'D9', name: '惯性困守', desc: '知道不对但改不了。在同一条路上绕了太久。' },
+    { id: 'D20', name: '决断瘫痪', desc: '一直在等"对的时机"。但你知道它不会来。' }
+  ]
 };
 
-const colors = { '+++':'#8b1a1a','++-':'#c87a2a','+-+':'#4a6fa5','+--':'#6a8a6a','-++':'#c49a4a','-+-':'#6a6a6a','--+':'#5a3a5a','---':'#3a3a5a' };
+const LINES = {
+  'T1': {
+    lines: ['你把外卖从三十块换成了十五块的，月底一看，还是超了。删掉了打车软件，开始走十五分钟去坐地铁。','打开手机银行看了一眼余额，锁屏放回兜里。站起来接水的时候，顺手把外卖里所有三十块以上的划掉了。','删掉了所有打车、外卖和视频会员的App。装了一个记账软件，输入了第一笔支出："泡面，3.5元。"','把旧电脑给了回收的人，没要钱。不是大方，是不想再搬了。回到屋里，新主机亮了。','开始教别人做你做的事了。教的时间是你替他们做的一半，那一半时间可以换成你的收入。','把之前半途而废的东西翻出来看了看，其实没那么差。坐下改了一版，发给了第一个人。'],
+    actions: ['写下一个数字：你最低需要多少钱活一个月。今天只写这个。','算一笔账：你最大的一笔非必要支出是什么？看见了就算做完。','取消一个自动续费。就一个。看看月底少了几块钱。','把一件闲置超过3个月的物品处理掉——卖掉、送掉、扔掉。','为你做的一件事定一个价格。不是市场价，是你愿意接受的最低价格。','为一个人做了一件你擅长的事，然后收钱。就从这一次开始。']
+  },
+  'D18': {
+    lines: ['查账单发现一笔自动续费忘了三个月。取消的时候看了总额——够吃十顿饭了。','把最近的支出拉了一张表，发现最大一笔不是房租，是零碎消费。手好像不是自己的。','开始记账了。发现有一笔不知道花哪了的钱，这个月累积到了六百。给它起了一行名字："黑洞"。','"黑洞"那个数字开始变小了。不是因为收入变多了，是因为开始看见它了。','能在月底说清楚钱去哪了。不需要跟任何人汇报，但自己知道了。','漏掉的东西变少了。从"漏"变成了"记下了"，离"记住了"还差一点——但在走了。'],
+    actions: ['查一下有哪几个自动续费你还开着。列出来，看完就行。','从列表里关掉一个。选那个你三个月没碰过的。','开一个记账条目叫"不知道花哪了"，今天花了什么不确定的，记进去。','把昨晚的支出回忆一遍写下来——能想起多少算多少。','今天花任何超过50块之前，先暂停10秒。停完再决定。','你花的每一笔钱都想得起是花在哪了。不用记了，你知道了。']
+  },
+  'H13': {
+    lines: ['同事让帮忙做PPT，加班到十一点。对方说了谢谢——那就是全部报酬了。','朋友找你借钱，借了。写借条的时候手在抖——知道他不会主动还。','帮了一个人，对方请你吃饭。你的服务值这顿饭的十倍。没说话，把饭吃了。','教别人做你的事，对方说"以后有活找你"。把自己的活儿教给了抢活儿的人。','开始说"不行"了。说出口之后发现对方没有追问。原来可以拒绝。','"不"已经是一个自然的词了。说完不会再去想对方怎么想。'],
+    actions: ['写下最近一次你答应但不想做的事。只写，不分析。','今天对一个人说一个很小的"不"——"这个时间我不行"。','说了"不"之后，不追加解释。让"不"自己站着。','连续两天，每天说一次"不"——对两件不同的事。','当对方追问时，只说"就是不行的"。不再给更多理由。','"不"和"好"一样自然。不再需要练习了。']
+  },
+  'T3': {
+    lines: ['刚辞职，还没想好下一步。打开招聘软件划了几下关掉了。告诉自己休息几天。','投了四份简历，没回复。又搜了一遍，结果跟上次一样。不知道该继续投还是停下来。','在招聘软件上划了半小时。看到一个岗位点进去——记不清第几次了。想投，看了要求又关了。','把三个招聘App都刷了一遍。投了七份，没回复。又拿起手机把刚投的看了一遍。','接到面试电话。挂了才发现手心出汗了——太久没听到"简历通过"了。对着镜子练了一下午。','收到offer时正在吃外卖。以为是垃圾邮件差点删了。看完把手机扣桌上。那口饭忽然有味道了。'],
+    actions: ['写下你现在能做的三件事——不用"擅长"，是"能做"。写完放着。','从三件事里选一件你最不讨厌的，搜一下"做这个需要什么"。只搜，不投。','找到那个岗位的要求，对着写下你已有的匹配项。有就是有，没有就是没有。','投一份简历。今天只投这一份。投完关掉手机。','为面试准备一个问题。只准备一个——你最想知道的。问出来。','你已经迈出第一步了。不是因为准备好了——是发现不准备好也能走。']
+  },
+  'D5': {
+    lines: ['连续几周每天睡不到五小时。早上的第一反应不是"新的一天"，是"又要应付完"。','请假去了医院，但一直在看手机。叫号的时候回了七条消息。医生说话像隔了一层玻璃。','开始不回复了。看着消息读完，把手机翻过去。等了十五分钟，它没再亮。','删掉了几个App，关掉了推送。手机放在桌上屏幕朝上——没有新的通知。','在医院坐了一天。没开工作群，没回消息。回去的路上一直看着窗外。','下班没看手机。今晚设的闹钟不是提醒你开会——是提醒你关灯睡觉。'],
+    actions: ['今晚提前15分钟放下手机。不要求睡，只要求提前进入黑暗。','今晚把手机放客厅。不要求早睡，只要求多走两步才能拿到。','提前20分钟放下所有屏幕。不是早点睡，是早点停止输入。','连续3天执行"睡前1小时无屏幕"。三天后看数据。','连续7天睡眠7小时以上。白天没那么困了，可以不用查了。','不再计算睡眠时间了。身体学会了在需要的时候困。']
+  },
+  'H8': {
+    lines: ['今天没离开过这张椅子。等天色暗了才发现过去了一整个白天。站起来腿麻了。','消息不回，灰尘不擦。风从窗缝灌进来，感觉到了，但没去关窗。','打开通讯录翻了一下又关上了。没什么好说的——但也知道，是不知道怎么开始说。','被一件事推了一下，不得不做。做完发现自己还能动。原来怕的不是做不好，是开始。','自己做了一件很小的事。做完了，没那么难。不需要庆祝，直接做了下一件。','今天能做的事比昨天多了一点。呼吸的时候肩膀是垂下去的。'],
+    actions: ['站起来，走3步，坐下。不是运动，是打断"坐着"一次。','设一个计时器，每45分钟站起来一次。不要求走，只要求中断。','站起来后做三个伸展——向上、转身、弯腰。不要求标准，做了就行。','连续两天，每天完成一次"站起来+走30步"。','连续5天，每天至少有一次"走动超过2分钟"的记录。','不再计算今天有没有站起来了。身体会提醒你。']
+  },
+  'H14': {
+    lines: ['刷了一整晚视频。关掉时凌晨两点。告诉自己明天不这样了——但知道明天还会。','又在用食物让自己舒服。吃完发现根本不饿。吃东西的时候在想别的事。','又在买东西了。拆快递时不记得买了什么。看着那些东西，发现只是想买点什么。','做了一件事，没发到任何平台。发现做完和被人看到之间的距离，比想象中宽。','手机放客厅，躺下了。没睡着，但不需要用任何东西来填充这十几分钟了。','不再需要那些短暂的逃避了。能安静坐一会儿——不刷手机，不吃东西，只是坐着。'],
+    actions: ['下次拿起手机准备刷的时候，先停3秒。不放下，不开始，只是停。','在下次想吃/刷/买之前，问自己一句"我现在在想什么"——不需要回答。','选一个你平时会用麻痹来回避的时刻，换一个动作——起身倒杯水，走出房间一分钟。','做一件可以发社交平台的事，但没发出去。做完之后安静待着。','手机放客厅，躺下了。不需要任何东西来填充这十几分钟。','可以在空白时刻里待着了。']
+  },
+  'D14': {
+    lines: ['电话里说了"好"。挂断后发现又答应了一件事。楼下有人散步，步子很慢。','饭桌上又听到那句"你是唯一的希望"。低头夹菜没接话。把碗放进水槽，水声盖过了那句话。','拒绝了。"这次我真的帮不了"。电话那头安静了。挂了之后没有内疚。','开始设底线了。告诉对方哪些能做、哪些不能。说完发现没有解释为什么。','对方开始尊重界限了。听到他们说"这件事我自己来就行"。停了一下，说"好"。','站在自己的边界内。帮他们做了一件事，做完没有在算"该不该做"。'],
+    actions: ['今天不接一个电话。只选一个人，只回避这一次。','当对方提出要求时，只说"我再想想"。不答应，不拒绝。','说一次"这个我做不了"。不解释原因。','设一条底线——告诉对方"这件事我不能做"。说完停住。','当对方试图越线时，再说一次"不行"。声音没有发抖。','不再需要练习了。对方已经学会了尊重你的边界。']
+  },
+  'D16': {
+    lines: ['又在想"要不要离婚"了。每次吵架都想到这个词，但第二天又假装没事。已经反复了两年。','一个人的时候反而轻松。想到回家胸口就沉。不是不爱了，是爱被磨成了习惯性的疲惫。','试着沟通过。每次说不到三句就吵，或者变成沉默。已经不想再说了。','问自己"如果离开会失去什么"——列了一张单子，比想象中长。不是放不下他，是放不下那张单子。','做了一个决定——不是离不离婚的决定，是不再让这个问题每天折磨自己的决定。','发现已经不太在意那个答案了。不是不在乎——是终于相信无论选哪条路，都能走。'],
+    actions: ['写下"如果不用考虑任何人，我想______"。填一个词，不判断，只写。','今天做一件和他无关的事。一个人去一个你们从没一起去过的地方。','找一个你信任的人，说出那句你从没对人说过的话。说出来就是完成。','写下你在这段关系里最不能失去的三样东西。看清楚底线在哪。','连续三天，每天为自己做一件事。"暂时不管他"——允许的。','无论选哪条路，你都能走。不需要答案了，已经有答案了。']
+  },
+  'H12': {
+    lines: ['搬了三次家，每次一个人。所有东西两个箱子装完。不知道是活着还是寄存着。','经过一家店，老板和熟客在聊天。走了过去没人叫住你。继续走了，没回头。','填表时"籍贯"那栏停了。不知道该写哪——那个地方不回去了，这里也不是。','在这个城市有了固定去处。常去的便利店，固定的理发师。开始被认出来了。','保安说了声"下班啦"。点了点头，发现自己笑了——以为没在笑。','不再问"我属于哪里"了。归属不是被给予的——你在的地方，就是你的地方。'],
+    actions: ['今天停在一个地方，对自己说一句："我在这里。"不需要相信，只需要说。','把房间里三样东西，移到你觉得"它们该在"的位置。','在这个城市找一个可以免费停留的地方——坐10分钟。','在常去的店点同一个东西。让它开始"认出你"。','连续一周，每天同一时间回到同一个地方待15分钟。','不再问"我属于哪里"了。你在的地方，就是你的地方。']
+  },
+  'H1': {
+    lines: ['填表时"职业"那栏停了很久。写了一个词划掉，又写了一个。最后写了一个很久没用过的头衔。','删掉了社交账号简介。光标一直闪。打了几个字又删了——不知道用什么词介绍自己。','有人说"你就是那个做XX的人"。想说"我已经不是了"，但只是点了点头。','开始做一件新的事。写下来的时候发现"职业"那栏可以不填了。','介绍自己时没说职位。"我最近在做XX"。说这句话时，没在等人接话。','不需要再定义自己了。站在自己做过的事情里。填表时写了一个词，直接翻到下一页。'],
+    actions: ['写下一个你曾经是但现在不是的身份。就写一个。','写下"我曾经是______"，填一个词。下面写"我现在是______"——第二个空着。','问一个人"你觉得我是怎样的人"。不解释为什么问。','写下三件你喜欢做的事——不是"擅长"，是"喜欢"。','用"我喜欢______，而不是______"写一句话。','已经在做喜欢的事了。做的时候不会问"这算不算我"。']
+  },
+  'H11': {
+    lines: ['拿到了追了三年的结果。看着通知心里没有波澜。放桌上，继续吃完那碗面。','别人说"你已经很成功了"。点了点头——不是因为同意，是懒得解释。','刷到别人晒收入晒房晒车。你都有，但你不羡慕——是不知道自己还该想要什么了。','试着找了一件新的事做。做了一半知道尽头什么样了。没继续。','停下来，没刷手机，没想下一步。已经很久没这样停过了。','发现"重要"不再需要别人定义了。知道哪些事对自己重要，哪怕全世界只有你在乎。'],
+    actions: ['今晚允许自己不做任何需要"有意义"的事——躺平一小时，不带愧疚。','做完之后停下来，感受一下做完的那几秒。不需要有意义。','选一件很久没做但以前喜欢的事——做5分钟。不是重新爱上，是让身体回忆一下。','创造一件只属于你自己的小事。它是你为自己设定的秩序。','连续三天，每天做一件"不需要被人知道"的事。','"重要"不再需要别人定义了。心里已经有了一把尺子。']
+  },
+  'D9': {
+    lines: ['走回同一个路口，拐进同一条街。拿的饮料和上周是同一款。是它好喝，还是没试过别的？','在同一件事上绕了一天。把方案改了一遍，调了几个数字。存成"待定_3"——不是3就是∞。','发现自己在同一件事上试第三遍了。光标停在同一个位置。脑子里成型了，但没写新版。','换了方法从零开始写。写出来的东西不一样——角度变了，不是从老文件拆的。','走到了一条新路上。结果不太一样——不是更好不是更差，是不同。回头看了一下继续走了。','已经在新的节奏里了。走到选择时已经在走另一条路了。每个转弯都没有犹豫。'],
+    actions: ['在一件最小的日常事上换一个选项——走另一条路回家，买一个没喝过的饮料。','在一件一直在做的事上，用一种不常用的做法——顺序调换，工具换掉。','选一件做了很久的事，停下来一天不碰它。不是解决，是观察轨迹。','重新做一次，但不参考之前任何版本。不翻旧文件，不回看记录。','走完新方向的一个完整回合——从开始到结束，不退回旧方法。','已经在走了。不需要再确认方向了。']
+  },
+  'D20': {
+    lines: ['有两个选择，列了一张对比表。填了半张就停了——知道填完还是决定不了。','问了三个人，三个答案。问越多越不知道怎么选。在等第四个人出现。','把决定推迟了一周。一周后又推了一周。不是等更好的选项——是在等一个不会错的选项。不存在。','闭眼选了一个。没后悔。怕的不是选错，是选了没退路。现在知道退路是自己给的。','做了一个决定，执行了。没告诉任何人——因为不需要确认。不确定的东西，走着走着就清晰了。','不再需要"对的时机"了。时机不是等来的，是走出来的。'],
+    actions: ['把两个选项各写一行。然后划掉一个。用笔划。','告诉一个人你的两个选项。他说话之前，你心里已经知道倾向哪个了。','选一个，执行一天。明天可以换。但今天先做这一个。','连续两天，每天执行所选方向的一个最小动作。','连续五天，每天走同一条路。五天之后你已经有数据了。','时机不是等来的。是你走出来的。']
+  }
+};
 
-let answers = {};
-let currentQ = 0;
+let state = { step: 0, answers: [] };
 
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const dots = document.querySelectorAll('.step-dot');
-  if(id==='pageQuiz'){dots[0].className='step-dot active';dots[1].className='step-dot';document.getElementById('stepLabel').textContent='第 1 步：答题';}
-  else{dots[0].className='step-dot done';dots[1].className='step-dot active';document.getElementById('stepLabel').textContent='第 2 步：你的方案';}
+function initQuiz() {
+  state = { step: 0, answers: [] };
+  document.getElementById('questionContainer').style.display = 'block';
+  document.getElementById('resultSection').classList.remove('active');
+  document.getElementById('submitNote').classList.remove('active');
+  document.getElementById('followSection').style.display = 'block';
+  document.getElementById('resultProgressBar').style.display = 'none';
+  renderProgress();
+  renderStep();
 }
 
-function renderQ(index) {
-  if(index>=questions.length){goToResult();return;}
-  const q=questions[index], sel=answers[q.id]||'';
-  document.getElementById('quizArea').innerHTML=`
-    <div class="q-title">${q.text}</div>
-    <div class="options">
-      <div class="option ${sel==='是'?'selected':''}" onclick="select(${q.id},'是')">✅ 是</div>
-      <div class="option ${sel==='不是'?'selected':''}" onclick="select(${q.id},'不是')">❌ 不是</div>
-    </div>`;
-  document.getElementById('progressFill').style.width=((index)/questions.length*100)+'%';
-  document.getElementById('prevBtn').style.display=index===0?'none':'block';
-  updateNextBtn();
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    if (i < state.step) dot.classList.add('done');
+    else if (i === state.step) dot.classList.add('active');
+    bar.appendChild(dot);
+  }
 }
 
-function select(qId,val){answers[qId]=val;document.querySelectorAll('.option').forEach(el=>{const t=el.textContent.trim().replace(/[✅❌]/g,'').trim();el.classList.toggle('selected',t===val);});updateNextBtn();}
-function updateNextBtn(){const b=document.getElementById('nextBtn');if(answers[questions[currentQ].id]){b.disabled=false;b.textContent=currentQ===questions.length-1?'查看方案 →':'下一题 →';}else b.disabled=true;}
-function nextQ(){if(!answers[questions[currentQ].id])return;currentQ++;renderQ(currentQ);}
-function prevQ(){if(currentQ>0){currentQ--;renderQ(currentQ);}}
-
-function goToResult(){
-  showPage('pageResult');
-  document.getElementById('progressFill').style.width='100%';
-  let tian=0,di=0,ren=0;
-  questions.forEach(q=>{const s=answers[q.id]==='是'?1:-1;if(q.dim==='tian')tian+=s;else if(q.dim==='di')di+=s;else ren+=s;});
-  const key=(tian>0?'+':'-')+(di>0?'+':'-')+(ren>0?'+':'-');
-  const res=results[key]||results['---'];
-  const c=colors[key]||'#8b1a1a';
-  document.getElementById('resultGua').textContent=res.gua;
-  document.getElementById('resultGua').style.color=c;
-  document.getElementById('resultDesc').textContent=res.desc;
-  const seq=questions.map(q=>answers[q.id]==='是'?'是':'否').join('');
-  document.getElementById('answerStrip').innerHTML=seq.split('').map(a=>a==='是'?'<span style="color:#6a9a6a">是</span>':'<span style="color:#c0392b">否</span>').join('');
-  document.getElementById('personalizedIntro').textContent=res.intro;
-  document.getElementById('presaleArea').style.display='block';
-  setTimeout(()=>{document.getElementById('presaleArea').scrollIntoView({behavior:'smooth',block:'start'});},400);
+function renderStep() {
+  renderProgress();
+  const container = document.getElementById('questionContainer');
+  container.innerHTML = '';
+  const q = document.createElement('div');
+  q.className = 'question active';
+  if (state.step === 0) renderStep0(q);
+  else if (state.step === 1) renderStep1(q);
+  else if (state.step === 2) renderStep2(q);
+  container.appendChild(q);
 }
 
-function copyContact(){
-  const gua = document.getElementById('resultGua').textContent;
-  const seq = Array.from(document.querySelectorAll('.answer-strip span')).map(s=>s.textContent).join('');
-  const txt = `【困局自测结果】
-回答：${seq}
-诊断：${gua}
-
-加微信：lanzheren（复制此ID去微信搜索）
-发送以上结果，免费领专业问卷`;
-  navigator.clipboard.writeText(txt).then(()=>{
-    alert('✅ 已复制！\n打开微信 → 搜索 lanzheren → 发送结果即可');
-  }).catch(()=>{
-    alert('请手动复制以下ID去微信搜索：lanzheren');
+function renderStep0(q) {
+  let opts = '';
+  MODULES.forEach((m) => {
+    opts += `<div class="option" data-value="${m.id}" onclick="selectOpt(this,'${m.id}')">
+        <span class="emoji">${m.emoji}</span>
+        <div class="text"><div class="main">${m.name}</div><div class="desc">${m.desc}</div></div>
+      </div>`;
   });
+  q.innerHTML = `<div class="step-label">STEP 1 / 3</div><h2>你现在最缺什么？</h2><p class="hint">选一个最接近你的感受。没有对错。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-primary" id="btnNext0" disabled onclick="nextStep()">开始诊断 →</button></div>`;
 }
 
-// 启动
-renderQ(0);
+function renderStep1(q) {
+  const moduleId = state.answers[0];
+  const guaList = GUA[moduleId];
+  const mod = MODULES.find(m => m.id === moduleId);
+  let opts = '';
+  guaList.forEach((g, i) => {
+    opts += `<div class="option" data-value="${i}" onclick="selectOpt(this,${i})">
+        <span class="emoji">🔍</span>
+        <div class="text"><div class="main">${g.name}</div><div class="desc">${g.desc}</div></div>
+      </div>`;
+  });
+  q.innerHTML = `<div class="step-label">STEP 2 / 3 · ${mod.emoji} ${mod.name}</div><h2>哪种情况更像你？</h2><p class="hint">不用纠结——选那个让你心里"嗯"了一下的。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-secondary" onclick="prevStep()">上一步</button><button class="btn btn-primary" id="btnNext1" disabled onclick="nextStep()">继续 →</button></div>`;
+}
+
+function renderStep2(q) {
+  const moduleId = state.answers[0];
+  const guaIdx = state.answers[1];
+  const gua = GUA[moduleId][guaIdx];
+  const data = LINES[gua.id];
+  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+  let opts = '';
+  data.lines.forEach((line, i) => {
+    opts += `<div class="option" data-value="${i}" onclick="selectOpt(this,${i})">
+        <span class="emoji">📌</span>
+        <div class="text"><div class="main">${line}</div><div class="desc" style="margin-top:4px;color:#7c3aed;font-size:12px;">${pos[i]}</div></div>
+      </div>`;
+  });
+  q.innerHTML = `<div class="step-label">STEP 3 / 3 · ${gua.name}</div><h2>哪句话最像你？</h2><p class="hint">如果好几条都像——选最近一次发生的那个。</p><div class="options">${opts}</div><div class="btn-row"><button class="btn btn-secondary" onclick="prevStep()">上一步</button><button class="btn btn-primary" id="btnNext2" disabled onclick="showResult()">查看我的结果 →</button></div>`;
+}
+
+function selectOpt(el, value) {
+  const parent = el.closest('.options');
+  parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.answers[state.step] = value;
+  const btnId = ['btnNext0', 'btnNext1', 'btnNext2'][state.step];
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = false;
+}
+
+function nextStep() { state.step++; renderStep(); }
+
+function prevStep() {
+  if (state.step === 0) return;
+  state.step--;
+  state.answers.pop();
+  renderStep();
+  const btnId = ['btnNext0', 'btnNext1'][state.step];
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = false;
+}
+
+function showResult() {
+  document.getElementById('questionContainer').style.display = 'none';
+  document.getElementById('resultSection').classList.add('active');
+  document.getElementById('resultProgressBar').style.display = 'flex';
+
+  const moduleId = state.answers[0];
+  const guaIdx = state.answers[1];
+  const lineIdx = state.answers[2];
+  const gua = GUA[moduleId][guaIdx];
+  const data = LINES[gua.id];
+  const mod = MODULES.find(m => m.id === moduleId);
+  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+
+  document.getElementById('resultTitle').textContent = `${gua.name} · ${pos[lineIdx]}`;
+  document.getElementById('resultSubtitle').textContent = `你卡在「${mod.name}」区域`;
+  document.getElementById('resultDiagnosis').textContent = data.lines[lineIdx];
+  document.getElementById('resultAction').textContent = '👉 ' + data.actions[lineIdx];
+}
+
+function checkFollowInput() {
+  document.getElementById('btnFollow').disabled = document.getElementById('wechatInput').value.trim().length < 2;
+}
+
+function checkEmailInput() {
+  const val = document.getElementById('emailInput').value.trim();
+  document.getElementById('btnEmail').disabled = val.length < 5 || !val.includes('@');
+}
+
+function submitFollow() {
+  const wx = document.getElementById('wechatInput').value.trim();
+  if (wx.length < 2) return;
+  const moduleId = state.answers[0];
+  const guaIdx = state.answers[1];
+  const lineIdx = state.answers[2];
+  const gua = GUA[moduleId][guaIdx];
+  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+  const result = gua.name + '·' + pos[lineIdx];
+
+  // Show note instead of auto-hide
+  document.getElementById('followSection').style.display = 'none';
+  const note = document.getElementById('submitNote');
+  note.innerHTML = `<strong>✅ 已提交</strong><br>请在 <strong>新打开的页面</strong> 中完成填写，我们就会把完整方案发给你。<br><span style="font-size:13px;color:var(--muted);">没看到新页面？<a href="https://tally.so/r/ZjWEpo?wechat=${encodeURIComponent(wx)}&result=${encodeURIComponent(result)}" target="_blank" style="color:#7c3aed;">点这里打开 →</a></span>`;
+  note.classList.add('active');
+
+  // Open Tally
+  window.open(`https://tally.so/r/ZjWEpo?wechat=${encodeURIComponent(wx)}&result=${encodeURIComponent(result)}`, '_blank');
+}
+
+function submitEmail() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (email.length < 5 || !email.includes('@')) return;
+  const moduleId = state.answers[0];
+  const guaIdx = state.answers[1];
+  const lineIdx = state.answers[2];
+  const gua = GUA[moduleId][guaIdx];
+  const pos = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+  const result = gua.name + '·' + pos[lineIdx];
+
+  document.getElementById('followSection').style.display = 'none';
+  const note = document.getElementById('submitNote');
+  note.innerHTML = `<strong>✅ 已提交</strong><br>请在 <strong>新打开的页面</strong> 中完成填写，我们就会把完整方案发给你。<br><span style="font-size:13px;color:var(--muted);">没看到新页面？<a href="https://tally.so/r/ZjWEpo?email=${encodeURIComponent(email)}&result=${encodeURIComponent(result)}" target="_blank" style="color:#7c3aed;">点这里打开 →</a></span>`;
+  note.classList.add('active');
+
+  window.open(`https://tally.so/r/ZjWEpo?email=${encodeURIComponent(email)}&result=${encodeURIComponent(result)}`, '_blank');
+}
+
+function resetQuiz() {
+  document.getElementById('followSection').style.display = 'block';
+  document.getElementById('submitNote').classList.remove('active');
+  initQuiz();
+}
+
+initQuiz();
 </script>
 </body>
 </html>
