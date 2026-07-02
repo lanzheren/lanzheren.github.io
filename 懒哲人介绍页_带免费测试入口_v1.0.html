@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>懒哲人：把高处的话，翻译成地上的路</title>
+  <style>
+    :root {
+      --ink: #20242a;
+      --muted: #66706f;
+      --paper: #f6f3ea;
+      --panel: #fffdf7;
+      --line: #ded7c8;
+      --green: #245f4a;
+      --red: #9c3f32;
+      --blue: #2d5c7f;
+      --gold: #c38b2d;
+      --shadow: 0 18px 50px rgba(32, 36, 42, 0.13);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edece4 0%, #f8f5ed 42%, #eef3ef 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; }
+
+    .hero {
+      min-height: 94vh;
+      display: grid;
+      align-items: end;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(16, 27, 30, 0.9), rgba(16, 27, 30, 0.58), rgba(16, 27, 30, 0.18)),
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=82");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 150px;
+      background: linear-gradient(180deg, transparent, rgba(237, 236, 228, 0.96));
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 72px 0 126px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+      gap: 34px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      padding: 4px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.13);
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 14px;
+    }
+
+    h1 {
+      margin: 18px 0 18px;
+      max-width: 760px;
+      font-size: clamp(38px, 5.2vw, 70px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 690px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 19px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-flex;
+      min-height: 45px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 760;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: #15352d;
+    }
+
+    .btn-ghost {
+      border-color: rgba(255, 255, 255, 0.42);
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .side-note {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: var(--radius);
+      background: rgba(12, 20, 22, 0.46);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+    }
+
+    .side-note strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .side-note p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 15px;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    section {
+      padding: 74px 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(260px, 0.58fr);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .label {
+      color: var(--green);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    h2 {
+      margin: 8px 0 0;
+      font-size: clamp(28px, 3.4vw, 44px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 247, 0.88);
+      box-shadow: 0 8px 24px rgba(32, 36, 42, 0.06);
+      padding: 20px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      line-height: 1.32;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .accent-green { border-top: 4px solid var(--green); }
+    .accent-red { border-top: 4px solid var(--red); }
+    .accent-blue { border-top: 4px solid var(--blue); }
+    .accent-gold { border-top: 4px solid var(--gold); }
+
+    .band {
+      background: #182522;
+      color: #f7f3e9;
+    }
+
+    .band .label { color: #e0b65e; }
+    .band .sub, .band .card p { color: rgba(247, 243, 233, 0.72); }
+    .band .card {
+      background: rgba(255, 255, 255, 0.055);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: none;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding: 22px 20px 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.68fr);
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .quote {
+      border-left: 5px solid var(--gold);
+      background: var(--panel);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 22px 24px;
+      color: #3d403d;
+      font-size: 18px;
+    }
+
+    .quote p {
+      margin: 0;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 247, 0.78);
+      color: #424944;
+    }
+
+    .cta {
+      padding: 76px 0 86px;
+      color: #fff;
+      background:
+        linear-gradient(90deg, rgba(36, 95, 74, 0.96), rgba(34, 59, 78, 0.9)),
+        url("https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=80");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .cta-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .cta h2 { margin: 0 0 10px; }
+    .cta p {
+      margin: 0;
+      max-width: 690px;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .wechat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #fff;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    footer {
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: 14px;
+      background: #f8f5ed;
+    }
+
+    @media (max-width: 920px) {
+      .hero-inner,
+      .section-head,
+      .split,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .grid,
+      .steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .side-note {
+        max-width: 560px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .hero {
+        min-height: 88vh;
+      }
+
+      .hero-inner {
+        width: min(100% - 24px, 1120px);
+        padding: 42px 0 96px;
+      }
+
+      .wrap {
+        width: min(100% - 24px, 1120px);
+      }
+
+      section {
+        padding: 54px 0;
+      }
+
+      .grid,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .cta-box {
+        align-items: stretch;
+      }
+
+      .btn,
+      .wechat {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <span class="eyebrow">懒哲人 · 复杂问题翻译层</span>
+        <h1>把高处的话，翻译成地上的路。</h1>
+        <p class="lead">政策、古文、AI、项目、文章、IP和人生卡住的地方，都可以先做一次归位：看清它在哪一层，卡在哪一点，下一步怎么走得更小。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://lanzheren.github.io/xiyouji/" target="_blank" rel="noopener">先做免费取经路测试</a>
+          <a class="btn btn-ghost" href="#what">看看这是干嘛的</a>
+        </div>
+      </div>
+      <aside class="side-note">
+        <strong>不是算命，不是鸡汤，也不是单纯讲国学。</strong>
+        <p>懒哲人做的是“归位”：把看不懂、说不清、落不下去的东西，翻译成普通人能判断、能行动、能发布的内容。</p>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section id="what">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">它解决什么</div>
+            <h2>很多人不是缺信息，是缺一个翻译层。</h2>
+          </div>
+          <p class="sub">现在重要的东西越来越多，但普通人真正卡住的地方，是不知道这些东西和自己有什么关系。</p>
+        </div>
+        <div class="grid">
+          <article class="card accent-green">
+            <h3>政策太高</h3>
+            <p>看得见方向，但不知道自己的机会在哪里，也不知道风险会怎么落到身上。</p>
+          </article>
+          <article class="card accent-gold">
+            <h3>古文太深</h3>
+            <p>知道经典有智慧，但读完还是不知道今天遇到的事该怎么判断。</p>
+          </article>
+          <article class="card accent-blue">
+            <h3>项目太乱</h3>
+            <p>网站、产品、IP、工具都有了，但说不清真正卡在表达、成交还是执行。</p>
+          </article>
+          <article class="card accent-red">
+            <h3>人也会卡住</h3>
+            <p>想离职、转型、副业、创业，心里有答案，却总是定不下来。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">四种归位</div>
+            <h2>把复杂对象，变成能走的路。</h2>
+          </div>
+          <p class="sub">不同对象进入同一套底层方法：先看位置，再看卡点，最后拆成下一步。</p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>译政策</h3>
+            <p>把高处的规划，翻译成普通人的机会、风险和行动入口。</p>
+          </article>
+          <article class="card">
+            <h3>译古文</h3>
+            <p>把《道德经》等经典，翻译成今天能用的判断，而不是只做注释。</p>
+          </article>
+          <article class="card">
+            <h3>译项目</h3>
+            <p>把网站、工具、商业计划和IP，拆成卡点、路径、改法和测试动作。</p>
+          </article>
+          <article class="card">
+            <h3>译卡住</h3>
+            <p>把说不清的状态，翻译成“我现在卡在哪、明天先做什么”。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">怎么运行</div>
+            <h2>不是直接给答案，而是先帮你归位。</h2>
+          </div>
+          <p class="sub">归位不是替你做决定。它只是把一团乱的问题，拆回能观察、能验证、能行动的地方。</p>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <h3>先看位置</h3>
+            <p>这件事属于人、项目、政策、文章、IP，还是一个混合困局？位置不清，建议就会乱。</p>
+          </article>
+          <article class="step">
+            <h3>再找卡点</h3>
+            <p>它卡在判断、资源、关系、表达、行动，还是反馈？不同卡点不能用同一种解法。</p>
+          </article>
+          <article class="step">
+            <h3>最后变小</h3>
+            <p>不追求一次解决。先找到明天就能做的一步，做完再看反馈。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap split">
+        <div>
+          <div class="label">适合谁</div>
+          <h2>如果你最近也有这些感觉，可以先从免费测试开始。</h2>
+          <div class="quote">
+            <p>你不必一上来就付费，也不必马上讲清自己的人生。先用一个轻测试，看看自己现在更像走在取经路的哪一段。</p>
+          </div>
+        </div>
+        <ul class="list">
+          <li>心里有事，但说不清自己到底卡在哪。</li>
+          <li>想离职、转型、创业、副业，但一直定不下来。</li>
+          <li>做了很多努力，但现实反馈很少。</li>
+          <li>有一个网站、工具、IP或项目，但不知道怎么让别人看懂。</li>
+          <li>看到政策、文章、AI工具，觉得重要，却不知道和自己有什么关系。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="cta" id="test">
+      <div class="wrap cta-box">
+        <div>
+          <h2>先做一个免费的取经路测试。</h2>
+          <p>它不会给你完整答案，只帮你先看见：你现在更像哪一种走法。如果测完觉得有点像自己，再考虑要不要找我做私人定位信。</p>
+        </div>
+        <div>
+          <a class="btn btn-primary" href="https://lanzheren.github.io/xiyouji/" target="_blank" rel="noopener">打开免费测试</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">继续深入</div>
+            <h2>免费测试之后，还有两层。</h2>
+          </div>
+          <p class="sub">如果只是想玩一玩，免费测试就够了。如果你确实卡住，可以再往下走。</p>
+        </div>
+        <div class="grid">
+          <article class="card accent-green">
+            <h3>免费取经路测试</h3>
+            <p>看你现在更像哪条取经路。适合先感受这套方法论。</p>
+          </article>
+          <article class="card accent-gold">
+            <h3>49元私人定位信</h3>
+            <p>看你的正式问卷原话、现实余量和行动历史，帮你看清主要卡点和明天一步。</p>
+          </article>
+          <article class="card accent-blue">
+            <h3>199元行动路线</h3>
+            <p>当你知道卡在哪，但不知道怎么走，把判断翻译成7天动作、测试文案和停止条件。</p>
+          </article>
+          <article class="card accent-red">
+            <h3>项目 / 文章 / IP 归位</h3>
+            <p>把一个复杂对象拆成可理解、可发布、可验证的方案。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="wrap split">
+        <div>
+          <div class="label">联系入口</div>
+          <h2>测完觉得有点像自己，就加我。</h2>
+          <p class="sub">微信备注“困局定位”。如果是项目、文章、网站或IP归位，可以备注“项目归位”。</p>
+        </div>
+        <div class="side-note">
+          <strong>微信号：weilong4096</strong>
+          <p>先说明你是做完测试来的，或者直接发你想归位的内容。我会先判断适不适合继续，不适合不会硬推。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">懒哲人 · 把高处的话，翻译成地上的路。免费测试入口：<a href="https://lanzheren.github.io/xiyouji/" target="_blank" rel="noopener">https://lanzheren.github.io/xiyouji/</a></div>
+  </footer>
+</body>
+</html>
